@@ -6,6 +6,10 @@ public class TimePoint
     private int minute;
 
     public TimePoint(final int hour, final int minute) {
+	if(hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+	    throw new IllegalArgumentException("Time point is out of bounds");
+	}
+
 	this.hour = hour;
 	this.minute = minute;
     }
@@ -15,16 +19,12 @@ public class TimePoint
     }
 
     public int compareTo(TimePoint other) {
-	final byte hourDiff = (byte)(other.hour - hour);
-	final byte minuteDiff = (byte)(other.minute - minute);
+	final int hourDiff = hour - other.hour;
+	final int minuteDiff = minute - other.minute;
 
-	if(hourDiff == 0 && minuteDiff == 0) {
-	    return 0;
-	} else if (hourDiff >= 0 && minuteDiff > 0) {
-	    return 1;
-	}
+	if(hourDiff == 0) return minuteDiff;
 
-	return 1;
+	return hourDiff;
     }
 
     public int getHour() {

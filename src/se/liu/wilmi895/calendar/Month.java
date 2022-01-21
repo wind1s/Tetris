@@ -20,10 +20,14 @@ public class Month
     private int number;
     private int days;
 
-    public Month(final String name, final byte number, final byte days) {
+    public Month(final String name) {
+	if (getMonthNumber(name) == 0) {
+	    throw new IllegalArgumentException(String.format("Month %s does not exist", name));
+	}
+
 	this.name = name;
-	this.number = number;
-	this.days = days;
+	this.number = MONTH_NAME_TO_NUMBER.get(name);
+	this.days = MONTH_NAME_TO_LENGTH.get(name);
     }
 
     public String getName() {

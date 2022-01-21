@@ -11,7 +11,14 @@ public class TimeSpan
     }
 
     @Override public String toString() {
-	return String.format("%s - %s", start.toString(), end.toString());
+	return String.format("%s-%s", start, end);
+    }
+
+    public int compareTo(TimeSpan other) {
+	final int startCompare = start.compareTo(other.start);
+	if (startCompare == 0) return end.compareTo(other.end);
+
+	return startCompare;
     }
 
     public static void main(String[] args) {
