@@ -6,6 +6,22 @@ public enum SquareType
 {
     EMPTY, I, O, T, S, Z, J, L;
 
+    public static SquareType[] getTypes() {
+	return SquareType.values();
+    }
+
+    public static int getTypeCount() {
+	return getTypes().length;
+    }
+
+    public static SquareType getType(int n) {
+	if (n > (getTypeCount() - 1) || n < 0) {
+	    throw new IllegalArgumentException("Illegal SquareType: " + n);
+	}
+
+	return getTypes()[n];
+    }
+
     public static void main(String[] args) {
 	final Random rnd = new Random();
 
@@ -17,7 +33,7 @@ public enum SquareType
 	final int length = values.length;
 
 	for (int i = 0; i < 25; i++) {
-	    System.out.println(values[rnd.nextInt(length-1)]);
+	    System.out.println(values[rnd.nextInt(length - 1)]);
 	}
     }
 }

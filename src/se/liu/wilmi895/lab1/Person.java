@@ -8,9 +8,9 @@ public class Person
     private String namn;
     private LocalDate birthDay;
 
-    Person(String namnet, LocalDate bDay) {
-        namn = namnet;
-        birthDay = bDay;
+    public Person(final String namn, final LocalDate birthDay) {
+        this.namn = namn;
+        this.birthDay = birthDay;
     }
 
     public static void main(String[] args) {

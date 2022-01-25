@@ -18,7 +18,7 @@ public class Exercise4
 		tabell = Integer.parseInt(input);
 		break;
 
-	    } catch (NumberFormatException ex) {
+	    } catch (NumberFormatException ignored) {
 		System.err.println("Please input an integer");
 	    }
 	}

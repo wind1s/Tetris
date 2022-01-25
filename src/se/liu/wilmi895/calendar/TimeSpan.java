@@ -20,8 +20,4 @@ public class TimeSpan
 
 	return startCompare;
     }
-
-    public static void main(String[] args) {
-	System.out.println(new TimeSpan(new TimePoint(12,5), new TimePoint(12,30)));
-    }
 }
