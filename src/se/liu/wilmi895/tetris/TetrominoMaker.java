@@ -4,33 +4,88 @@ import java.util.Arrays;
 
 public class TetrominoMaker
 {
-    public TetrominoMaker() {
-    }
 
     public int getNumberOfTypes() {
 	return SquareType.getTypeCount();
     }
 
-    public Poly getPoly(int n) {
-	final int nTypes = getNumberOfTypes();
-	final SquareType polyType = SquareType.getType(n);
+    public Poly getPoly(final int n) {
 	SquareType[][] polyShape;
 
-	switch (polyType) {
-	    case I -> polyShape = new SquareType[4][4];
-	    case O -> polyShape = new SquareType[2][2];
-	    case J, L, S, T, Z -> polyShape = new SquareType[3][3];
-	    default -> throw new IllegalArgumentException("Invalid index: " + n);
+	switch (SquareType.fromInteger(n)) {
+	    case I -> polyShape = createPolyShapeI();
+	    case O -> polyShape = createPolyShapeO();
+	    case J -> polyShape = createPolyShapeJ();
+	    case L -> polyShape = createPolyShapeL();
+	    case S -> polyShape = createPolyShapeS();
+	    case T -> polyShape = createPolyShapeT();
+	    case Z -> polyShape = createPolyShapeZ();
+	    default -> throw new IllegalArgumentException("Invalid Poly index: " + n);
 	}
 
-	fillPolyShape(polyShape, polyType);
 	return new Poly(polyShape);
     }
 
-    private static void fillPolyShape(SquareType[][] shape, SquareType type) {
-	for(SquareType[] row : shape) {
-	    Arrays.fill(row, type);
+    public static void main(String[] args) {
+	TetrominoMaker tet = new TetrominoMaker();
+	for (SquareType[] s : tet.createPolyShapeI()) {
+	    for (SquareType k : s) {
+		System.out.println(k);
+	    }
 	}
+    }
+
+    public SquareType[] createPolyShapeRow(final SquareType type, final int length) {
+	SquareType[] row = new SquareType[length];
+	Arrays.fill(row, type);
+	return row;
+    }
+
+    public SquareType[][] createPolyShapeI() {
+	SquareType[][] shape = { createPolyShapeRow(SquareType.EMPTY, 4), createPolyShapeRow(SquareType.I, 4),
+		createPolyShapeRow(SquareType.EMPTY, 4), createPolyShapeRow(SquareType.EMPTY, 4) };
+	return shape;
+    }
+
+    private SquareType[][] createPolyShapeO() {
+	SquareType[][] shape = { createPolyShapeRow(SquareType.O, 2), createPolyShapeRow(SquareType.O, 2) };
+	return shape;
+    }
+
+    private SquareType[][] createPolyShapeJ() {
+	SquareType[][] shape =
+		{ { SquareType.J, SquareType.EMPTY, SquareType.EMPTY }, createPolyShapeRow(SquareType.J, 3),
+			createPolyShapeRow(SquareType.EMPTY, 3) };
+	return shape;
+    }
+
+    private SquareType[][] createPolyShapeL() {
+	SquareType[][] shape =
+		{ { SquareType.EMPTY, SquareType.EMPTY, SquareType.L }, createPolyShapeRow(SquareType.L, 3),
+			createPolyShapeRow(SquareType.EMPTY, 3) };
+	return shape;
+    }
+
+    private SquareType[][] createPolyShapeS() {
+
+	SquareType[][] shape =
+		{ { SquareType.EMPTY, SquareType.S, SquareType.S }, { SquareType.S, SquareType.S, SquareType.EMPTY },
+			createPolyShapeRow(SquareType.EMPTY, 3) };
+	return shape;
+    }
+
+    private SquareType[][] createPolyShapeT() {
+	SquareType[][] shape =
+		{ { SquareType.EMPTY, SquareType.T, SquareType.EMPTY }, createPolyShapeRow(SquareType.T, 3),
+			createPolyShapeRow(SquareType.EMPTY, 3) };
+	return shape;
+    }
+
+    private SquareType[][] createPolyShapeZ() {
+	SquareType[][] shape =
+		{ { SquareType.Z, SquareType.Z, SquareType.EMPTY }, { SquareType.EMPTY, SquareType.Z, SquareType.Z },
+			createPolyShapeRow(SquareType.EMPTY, 3) };
+	return shape;
     }
 
 }

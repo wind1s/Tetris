@@ -10,10 +10,10 @@ public class BoardToTextConverter
 	// Check each square for its type and append its string representation.
 	for (int y = 0; y < height; y++) {
 	    for (int x = 0; x < width; x++) {
-		final SquareType square = board.getSquare(x, y);
+		final SquareType square = board.getVisibleSquare(x, y);
 
 		switch (square) {
-		    case EMPTY -> builder.append("-");
+		    case EMPTY -> builder.append("_");
 		    case I -> builder.append("@");
 		    case J -> builder.append("#");
 		    case L -> builder.append("$");
@@ -21,8 +21,10 @@ public class BoardToTextConverter
 		    case S -> builder.append("&");
 		    case T -> builder.append("=");
 		    case Z -> builder.append("*");
-		    default -> throw new IllegalArgumentException("Illegal square type: " + square);
+		    default -> throw new IllegalArgumentException("Illegal SquareType: " + square);
 		}
+
+		builder.append(" ");
 	    }
 
 	    builder.append("\n");
