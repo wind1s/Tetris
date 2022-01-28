@@ -18,7 +18,7 @@ public class Board
 	this.width = width;
 	this.height = height;
 	this.falling = new TetrominoMaker().getPoly(1);
-	this.fallingPos = new Point(3,3);
+	this.fallingPos = new Point(3, 3);
 	this.squares = new SquareType[height][width];
 
 	for (SquareType[] array : this.squares) {
@@ -52,7 +52,9 @@ public class Board
 	    if (xDiff >= 0 && xDiff < falling.getWidth() && yDiff >= 0 && yDiff < falling.getHeight()) {
 		final SquareType square = falling.getSquare(xDiff, yDiff);
 
-		if (square != SquareType.EMPTY) return square;
+		if (square != SquareType.EMPTY) {
+		    return square;
+		}
 	    }
 	}
 

@@ -16,7 +16,9 @@ public class TimeSpan
 
     public int compareTo(TimeSpan other) {
 	final int startCompare = start.compareTo(other.start);
-	if (startCompare == 0) return end.compareTo(other.end);
+	if (startCompare == 0) {
+	    return end.compareTo(other.end);
+	}
 
 	return startCompare;
     }

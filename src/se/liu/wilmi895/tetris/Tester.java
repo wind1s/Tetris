@@ -7,6 +7,5 @@ public class Tester
 	board.randomizeBoard();
 	final TetrisViewer tetrisViewer = new TetrisViewer(board);
 	tetrisViewer.show();
-
     }
 }

@@ -6,7 +6,7 @@ public class TimePoint
     private int minute;
 
     public TimePoint(final int hour, final int minute) {
-	if(hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+	if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
 	    throw new IllegalArgumentException("Time point is out of bounds");
 	}
 
@@ -22,7 +22,9 @@ public class TimePoint
 	final int hourDiff = hour - other.hour;
 	final int minuteDiff = minute - other.minute;
 
-	if(hourDiff == 0) return minuteDiff;
+	if (hourDiff == 0) {
+	    return minuteDiff;
+	}
 
 	return hourDiff;
     }

@@ -10,37 +10,37 @@ public class Circle implements Shape
     private Color color;
 
     public Circle(final int x, final int y, final int radius, final Color color) {
-        if (radius < 0) {
-            throw new IllegalArgumentException("Negative radius!");
-        }
+	if (radius < 0) {
+	    throw new IllegalArgumentException("Negative radius!");
+	}
 
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
-        this.color = color;
+	this.x = x;
+	this.y = y;
+	this.radius = radius;
+	this.color = color;
     }
 
     @Override public int getX() {
-        return x;
+	return x;
     }
 
     @Override public int getY() {
-        return y;
+	return y;
     }
 
     public int getRadius() {
-        return radius;
+	return radius;
     }
 
     @Override public Color getColor() {
-        return color;
+	return color;
     }
 
     @Override public String toString() {
-        return "Circle{" + "x=" + x + ", y=" + y + ", radius=" + radius + ", color=" + color + '}';
+	return "Circle{" + "x=" + x + ", y=" + y + ", radius=" + radius + ", color=" + color + '}';
     }
 
     @Override public void draw() {
-        System.out.println("Ritar: " + this);
+	System.out.println("Ritar: " + this);
     }
 }
