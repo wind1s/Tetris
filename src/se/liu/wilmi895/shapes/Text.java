@@ -1,6 +1,8 @@
 package se.liu.wilmi895.shapes;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Font;
 import java.util.Objects;
 
 public class Text extends AbstractShape
@@ -18,8 +20,9 @@ public class Text extends AbstractShape
 	return "Text{" + "x=" + x + ", y=" + y + ", size=" + size + ", color=" + color + ", text='" + text + '\'' + '}';
     }
 
-    @Override public void draw() {
-	System.out.println("Ritar: " + this);
+    @Override public void draw(final Graphics g) {
+	g.setFont(new Font("serif", Font.PLAIN, size));
+	g.drawString(text, x, y);
     }
 
     @Override public boolean equals(final Object o) {

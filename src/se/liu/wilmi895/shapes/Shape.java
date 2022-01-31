@@ -1,6 +1,7 @@
 package se.liu.wilmi895.shapes;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Color;
 
 public interface Shape
 {
@@ -10,5 +11,5 @@ public interface Shape
 
     Color getColor();
 
-    void draw();
+    void draw(final Graphics g);
 }

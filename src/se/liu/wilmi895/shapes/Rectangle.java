@@ -1,6 +1,7 @@
 package se.liu.wilmi895.shapes;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.util.Objects;
 
 public class Rectangle extends AbstractShape
@@ -19,8 +20,9 @@ public class Rectangle extends AbstractShape
 	       '}';
     }
 
-    @Override public void draw() {
-	System.out.println("Ritar: " + this);
+    @Override public void draw(final Graphics g) {
+	g.setColor(color);
+	g.drawRect(x, y, width, height);
     }
 
     @Override public boolean equals(final Object o) {

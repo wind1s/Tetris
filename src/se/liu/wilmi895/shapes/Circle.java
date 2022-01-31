@@ -1,6 +1,7 @@
 package se.liu.wilmi895.shapes;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.util.Objects;
 
 public class Circle extends AbstractShape
@@ -25,8 +26,12 @@ public class Circle extends AbstractShape
 	return "Circle{" + "x=" + getX() + ", y=" + getY() + ", radius=" + radius + ", color=" + getColor() + '}';
     }
 
-    @Override public void draw() {
-	System.out.println("Ritar: " + this);
+    @Override public void draw(final Graphics g) {
+	final int width = 2 * radius;
+	final int height = 2 * radius;
+
+	g.setColor(color);
+	g.drawOval(x, y,  width, height);
     }
 
     @Override public boolean equals(final Object o) {

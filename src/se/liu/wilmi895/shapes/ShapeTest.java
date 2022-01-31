@@ -19,7 +19,7 @@ public class ShapeTest
 
 
 	for (Shape shape : shapes) {
-	    shape.draw();
+	    //shape.draw();
 	}
     }
 }
