@@ -1,12 +1,13 @@
 package se.liu.wilmi895.shapes;
 
-import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.awt.Color;
 
 public class ShapeTest
 {
     public static void main(String[] args) {
-	final ArrayList<Shape> shapes = new ArrayList<>();
+	final List<Shape> shapes = new ArrayList<>();
 	shapes.add(new Circle(0, 0, 2, Color.BLACK));
 	shapes.add(new Circle(5, 5, 5, Color.BLUE));
 	shapes.add(new Circle(-1, 3, 1, Color.RED));
