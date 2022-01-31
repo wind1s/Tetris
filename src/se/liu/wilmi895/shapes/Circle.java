@@ -31,7 +31,7 @@ public class Circle extends AbstractShape
 	final int height = 2 * radius;
 
 	g.setColor(color);
-	g.drawOval(x, y,  width, height);
+	g.drawOval(x, y, width, height);
     }
 
     @Override public boolean equals(final Object o) {

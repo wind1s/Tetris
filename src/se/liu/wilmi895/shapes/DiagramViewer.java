@@ -2,7 +2,6 @@ package se.liu.wilmi895.shapes;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Shape;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JFrame;
@@ -11,8 +10,7 @@ import javax.swing.JFrame;
 public class DiagramViewer
 {
     private final static List<Color> COLORS =
-	    List.of(Color.BLACK, Color.RED, Color.GREEN, Color.BLUE,
-		    Color.CYAN, Color.YELLOW, Color.MAGENTA);
+	    List.of(Color.BLACK, Color.RED, Color.GREEN, Color.BLUE, Color.CYAN, Color.YELLOW, Color.MAGENTA);
 
     // Set a fixed seed 0 so you always get the same
     // shapes (for debugging)
@@ -23,19 +21,15 @@ public class DiagramViewer
     }
 
     private static Circle getRandomCircle() {
-	return new Circle(RND.nextInt(400), RND.nextInt(400),
-			  RND.nextInt(200), getRandomColor());
+	return new Circle(RND.nextInt(400), RND.nextInt(400), RND.nextInt(200), getRandomColor());
     }
 
     private static Rectangle getRandomRectangle() {
-	return new Rectangle(RND.nextInt(400), RND.nextInt(400),
-			     RND.nextInt(200), RND.nextInt(200),
-			     getRandomColor());
+	return new Rectangle(RND.nextInt(400), RND.nextInt(400), RND.nextInt(200), RND.nextInt(200), getRandomColor());
     }
 
     private static Text getRandomText() {
-	return new Text(RND.nextInt(400), RND.nextInt(400), RND.nextInt(15, 30), getRandomColor(),
-			"Hello");
+	return new Text(RND.nextInt(400), RND.nextInt(400), RND.nextInt(15, 30), getRandomColor(), "Hello");
     }
 
     public static void main(String[] args) {
