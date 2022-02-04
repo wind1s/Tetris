@@ -9,9 +9,13 @@ public class TetrisComponent extends JComponent
     private final static int SQUARE_PIXEL_SIZE = 35;
     private final static EnumMap<SquareType, Color> SQUARE_COLORS = createColorMap();
     private Board board;
+    private int boardWidth;
+    private int boardHeight;
 
     public TetrisComponent(final Board board) {
 	this.board = board;
+	this.boardWidth = board.getWidth();
+	this.boardHeight = board.getHeight();
     }
 
     @Override public Dimension getPreferredSize() {
@@ -21,24 +25,25 @@ public class TetrisComponent extends JComponent
     @Override protected void paintComponent(final Graphics g) {
 	super.paintComponent(g);
 	final Graphics2D g2d = (Graphics2D) g;
-	final int width = board.getWidth();
-	final int height = board.getHeight();
 
-	for (int x = 0; x < width; x++) {
-	    for (int y = 0; y < height; y++) {
+	for (int x = 0; x < boardWidth; x++) {
+	    for (int y = 0; y < boardHeight; y++) {
 		paintSquare(x, y, g2d);
 	    }
 	}
     }
 
     private void paintSquare(final int x, final int y, final Graphics2D g) {
-	//final Dimension size = this.getSize();
-	final int xDrawPos = x * SQUARE_PIXEL_SIZE;
-	final int yDrawPos = y * SQUARE_PIXEL_SIZE;
+	final Dimension componentDimension = this.getSize();
+	final int squareWidth = componentDimension.width / boardWidth;
+	final int squareHeight = componentDimension.height / boardHeight;
+	final int xDrawPos = x * squareWidth;
+	final int yDrawPos = y * squareHeight;
+
 	g.setColor(SQUARE_COLORS.get(board.getVisibleSquare(x, y)));
-	g.fill3DRect(xDrawPos, yDrawPos, SQUARE_PIXEL_SIZE, SQUARE_PIXEL_SIZE, true);
+	g.fill3DRect(xDrawPos, yDrawPos, squareWidth, squareHeight, true);
 	g.setColor(Color.BLACK);
-	g.drawRect(xDrawPos, yDrawPos, SQUARE_PIXEL_SIZE, SQUARE_PIXEL_SIZE);
+	g.drawRect(xDrawPos, yDrawPos, squareWidth, squareHeight);
     }
 
     private static EnumMap<SquareType, Color> createColorMap() {
