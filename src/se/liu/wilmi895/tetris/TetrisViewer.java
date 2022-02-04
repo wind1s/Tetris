@@ -1,9 +1,7 @@
 package se.liu.wilmi895.tetris;
 
 import javax.swing.JFrame;
-import javax.swing.JTextArea;
 import java.awt.BorderLayout;
-import java.awt.Font;
 import javax.swing.Timer;
 import javax.swing.Action;
 import javax.swing.AbstractAction;
@@ -26,10 +24,11 @@ public class TetrisViewer
 	frame.pack();
 	frame.setVisible(true);
 
+	tetrisBoard.addBoardListener(tetrisComponent);
+
 	final Action doOneStep = new AbstractAction() {
 	    public void actionPerformed(ActionEvent e) {
-		tetrisBoard.randomizeBoard();
-		tetrisComponent.repaint();
+		tetrisBoard.tick();
 	    }
 	};
 
