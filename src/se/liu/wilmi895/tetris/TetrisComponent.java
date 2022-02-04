@@ -25,18 +25,19 @@ public class TetrisComponent extends JComponent
     @Override protected void paintComponent(final Graphics g) {
 	super.paintComponent(g);
 	final Graphics2D g2d = (Graphics2D) g;
+	final Dimension componentDimension = this.getSize();
+	//final int squareWidth = componentDimension.width / boardWidth;
+	final int squareHeight = componentDimension.height / boardHeight;
+
 
 	for (int x = 0; x < boardWidth; x++) {
 	    for (int y = 0; y < boardHeight; y++) {
-		paintSquare(x, y, g2d);
+		paintSquare(x, y, squareHeight, squareHeight, g2d);
 	    }
 	}
     }
 
-    private void paintSquare(final int x, final int y, final Graphics2D g) {
-	final Dimension componentDimension = this.getSize();
-	final int squareWidth = componentDimension.width / boardWidth;
-	final int squareHeight = componentDimension.height / boardHeight;
+    private void paintSquare(final int x, final int y, final int squareWidth, final int squareHeight, final Graphics2D g) {
 	final int xDrawPos = x * squareWidth;
 	final int yDrawPos = y * squareHeight;
 

@@ -33,7 +33,7 @@ public class TetrisViewer
 	    }
 	};
 
-	final Timer clockTimer = new Timer(500, doOneStep);
+	final Timer clockTimer = new Timer(1000, doOneStep);
 	clockTimer.setCoalesce(true);
 	clockTimer.start();
     }
