@@ -55,11 +55,10 @@ public class Board
     }
 
     public void tick() {
-	if(falling != null && fallingPos != null) {
-		fallingPos.y += 1;
+	if (falling != null && fallingPos != null) {
+	    moveFalling(fallingPos.x, fallingPos.y + 1);
 	} else {
-		setFalling(RND.nextInt(1, squareTypeCount));
-		moveFalling((width - falling.getWidth()) / 2,0);
+	    setFalling(RND.nextInt(1, squareTypeCount));
 	}
 
 	notifyListeners();
@@ -67,10 +66,12 @@ public class Board
 
     private void setFalling(final int n) {
 	falling = tetrominoMaker.getPoly(n);
+	// Set the position to top middle of the screen.
+	fallingPos = new Point((width - falling.getWidth()) / 2, 0);
     }
 
     private void moveFalling(final int x, final int y) {
-	fallingPos = new Point(x,y);
+	fallingPos.move(x, y);
     }
 
     public void randomizeBoard() {

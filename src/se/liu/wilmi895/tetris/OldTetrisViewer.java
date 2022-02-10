@@ -25,7 +25,8 @@ public class OldTetrisViewer
 	frame.setVisible(true);
 
 
-	final Action doOneStep = new AbstractAction() {
+	final Action doOneStep = new AbstractAction()
+	{
 	    public void actionPerformed(ActionEvent e) {
 		tetrisBoard.randomizeBoard();
 		textArea.setText(converter.convertToText(tetrisBoard));

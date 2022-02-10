@@ -10,15 +10,16 @@ import java.awt.event.ActionEvent;
 public class TetrisViewer
 {
     private Board tetrisBoard;
+    private JFrame frame;
+    private TetrisComponent tetrisComponent;
 
-    public TetrisViewer(final Board tetrisBoard) {
+    public TetrisViewer(final String frameTitle, final Board tetrisBoard) {
 	this.tetrisBoard = tetrisBoard;
+	this.frame = new JFrame(frameTitle);
+	this.tetrisComponent = new TetrisComponent(tetrisBoard);
     }
 
     public void show() {
-	final JFrame frame = new JFrame("Tetris");
-	final TetrisComponent tetrisComponent = new TetrisComponent(tetrisBoard);
-
 	frame.setLayout(new BorderLayout());
 	frame.add(tetrisComponent, BorderLayout.CENTER);
 	frame.pack();
@@ -26,7 +27,8 @@ public class TetrisViewer
 
 	tetrisBoard.addBoardListener(tetrisComponent);
 
-	final Action doOneStep = new AbstractAction() {
+	final Action doOneStep = new AbstractAction()
+	{
 	    public void actionPerformed(ActionEvent e) {
 		tetrisBoard.tick();
 	    }

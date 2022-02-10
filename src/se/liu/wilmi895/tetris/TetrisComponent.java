@@ -37,7 +37,9 @@ public class TetrisComponent extends JComponent implements BoardListener
 	}
     }
 
-    private void paintSquare(final int x, final int y, final int squareWidth, final int squareHeight, final Graphics2D g) {
+    private void paintSquare(final int x, final int y, final int squareWidth, final int squareHeight,
+			     final Graphics2D g)
+    {
 	final int xDrawPos = x * squareWidth;
 	final int yDrawPos = y * squareHeight;
 
