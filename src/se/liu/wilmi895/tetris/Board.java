@@ -17,8 +17,7 @@ public class Board
     private int height;
     private Poly falling;
     private Point fallingPos;
-    private int fallingWidth;
-    private int fallingHeight;
+    private int fallingSize;
     private TetrominoMaker tetrominoMaker;
     private boolean gameOver;
 
@@ -27,8 +26,7 @@ public class Board
 	this.height = height;
 	this.falling = null;
 	this.fallingPos = null;
-	this.fallingWidth = 0;
-	this.fallingHeight = 0;
+	this.fallingSize = 0;
 	this.tetrominoMaker = new TetrominoMaker();
 	this.gameOver = false;
 	initDefaultBoard();
@@ -97,8 +95,8 @@ public class Board
     }
 
     private void placeFallingOnBoard() {
-	for (int y = 0; y < fallingHeight; y++) {
-	    for (int x = 0; x < fallingWidth; x++) {
+	for (int y = 0; y < fallingSize; y++) {
+	    for (int x = 0; x < fallingSize; x++) {
 		final SquareType squareType = falling.getSquare(x, y);
 
 		if (squareType != SquareType.EMPTY) {
@@ -115,14 +113,13 @@ public class Board
     private void setFalling(final int n) {
 	falling = tetrominoMaker.getPoly(n);
 	// Set the position to top middle of the screen.
-	fallingPos = new Point((width + DOUBLE_MARGIN - falling.getWidth()) / 2, MARGIN);
-	fallingWidth = falling.getWidth();
-	fallingHeight = falling.getHeight();
+	fallingSize = falling.getSize();
+	fallingPos = new Point((width + DOUBLE_MARGIN - fallingSize) / 2, MARGIN);
     }
 
     private boolean hasCollision() {
-	for (int x = 0; x < fallingWidth; ++x) {
-	    for (int y = 0; y < fallingHeight; ++y) {
+	for (int x = 0; x < fallingSize; ++x) {
+	    for (int y = 0; y < fallingSize; ++y) {
 		if (hasFallingCollision(x, y)) {
 		    return true;
 		}
@@ -157,7 +154,26 @@ public class Board
 	}
     }
 
-    public void rotate(Direction direction) {}
+    public void rotate(Direction direction) {
+	if (hasFallingTetromino()) {
+	    Poly rotatedFalling = null;
+
+	    switch (direction) {
+		case LEFT -> rotatedFalling = falling.rotatedLeft();
+		case RIGHT -> rotatedFalling = falling.rotatedRight();
+		default -> throw new IllegalArgumentException("Invalid rotate direction");
+	    }
+
+	    final Poly oldFalling = falling;
+	    falling = rotatedFalling;
+
+	    if (hasCollision()) {
+		falling = oldFalling;
+	    } else {
+		notifyListeners();
+	    }
+	}
+    }
 
     public SquareType getSquare(final int x, final int y) {
 	if (outsideBoard(x, y)) {
@@ -172,7 +188,7 @@ public class Board
 	    final int xDiff = x - fallingPos.x + MARGIN;
 	    final int yDiff = y - fallingPos.y + MARGIN;
 
-	    if (xDiff >= 0 && xDiff < falling.getWidth() && yDiff >= 0 && yDiff < falling.getHeight()) {
+	    if (xDiff >= 0 && xDiff < fallingSize && yDiff >= 0 && yDiff < fallingSize) {
 		final SquareType square = falling.getSquare(xDiff, yDiff);
 
 		if (square != SquareType.EMPTY) {
@@ -196,7 +212,7 @@ public class Board
 	final int length = tetrominoMaker.getNumberOfTypes() - 2;
 
 	for (final SquareType[] row : squares) {
-	    for (int x = 0; x < width; x++) {
+	    for (int x = 0; x < width; ++x) {
 		row[x] = SquareType.fromInteger(Board.RND.nextInt(length));
 	    }
 	}
