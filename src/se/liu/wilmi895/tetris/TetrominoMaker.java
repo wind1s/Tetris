@@ -26,56 +26,52 @@ public class TetrominoMaker
 	return new Poly(polyShape);
     }
 
-    public SquareType[] createShapeTypeRow(final SquareType type, final int length) {
-	SquareType[] row = new SquareType[length];
-	Arrays.fill(row, type);
-	return row;
-    }
-
     public SquareType[][] createShapeI() {
-	SquareType[][] shape = { createShapeTypeRow(SquareType.EMPTY, 4), createShapeTypeRow(SquareType.I, 4),
-		createShapeTypeRow(SquareType.EMPTY, 4), createShapeTypeRow(SquareType.EMPTY, 4) };
+	final SquareType empty = SquareType.EMPTY;
+	final SquareType i = SquareType.I;
+	SquareType[][] shape = { { empty, empty, empty, empty }, { i, i, i, i }, { empty, empty, empty, empty },
+		{ empty, empty, empty, empty } };
 	return shape;
     }
 
     private SquareType[][] createShapeO() {
-	SquareType[][] shape = { createShapeTypeRow(SquareType.O, 2), createShapeTypeRow(SquareType.O, 2) };
+	final SquareType o = SquareType.O;
+	SquareType[][] shape = { { o, o }, { o, o } };
 	return shape;
     }
 
     private SquareType[][] createShapeJ() {
-	SquareType[][] shape =
-		{ { SquareType.J, SquareType.EMPTY, SquareType.EMPTY }, createShapeTypeRow(SquareType.J, 3),
-			createShapeTypeRow(SquareType.EMPTY, 3) };
+	final SquareType empty = SquareType.EMPTY;
+	final SquareType j = SquareType.J;
+	SquareType[][] shape = { { j, empty, empty }, { j, j, j }, { empty, empty, empty } };
 	return shape;
     }
 
     private SquareType[][] createShapeL() {
-	SquareType[][] shape =
-		{ { SquareType.EMPTY, SquareType.EMPTY, SquareType.L }, createShapeTypeRow(SquareType.L, 3),
-			createShapeTypeRow(SquareType.EMPTY, 3) };
+	final SquareType empty = SquareType.EMPTY;
+	final SquareType l = SquareType.L;
+	SquareType[][] shape = { { empty, empty, l }, { l, l, l }, { empty, empty, empty } };
 	return shape;
     }
 
     private SquareType[][] createShapeS() {
-
-	SquareType[][] shape =
-		{ { SquareType.EMPTY, SquareType.S, SquareType.S }, { SquareType.S, SquareType.S, SquareType.EMPTY },
-			createShapeTypeRow(SquareType.EMPTY, 3) };
+	final SquareType empty = SquareType.EMPTY;
+	final SquareType s = SquareType.S;
+	SquareType[][] shape = { { empty, s, s }, { s, s, empty }, { empty, empty, empty } };
 	return shape;
     }
 
     private SquareType[][] createShapeT() {
-	SquareType[][] shape =
-		{ { SquareType.EMPTY, SquareType.T, SquareType.EMPTY }, createShapeTypeRow(SquareType.T, 3),
-			createShapeTypeRow(SquareType.EMPTY, 3) };
+	final SquareType empty = SquareType.EMPTY;
+	final SquareType t = SquareType.T;
+	SquareType[][] shape = { { empty, t, empty }, { t, t, t }, { empty, empty, empty } };
 	return shape;
     }
 
     private SquareType[][] createShapeZ() {
-	SquareType[][] shape =
-		{ { SquareType.Z, SquareType.Z, SquareType.EMPTY }, { SquareType.EMPTY, SquareType.Z, SquareType.Z },
-			createShapeTypeRow(SquareType.EMPTY, 3) };
+	final SquareType empty = SquareType.EMPTY;
+	final SquareType z = SquareType.Z;
+	SquareType[][] shape = { { z, z, empty }, { empty, z, z }, { empty, empty, empty } };
 	return shape;
     }
 
