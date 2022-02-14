@@ -1,5 +1,6 @@
 package se.liu.wilmi895.tetris;
 
+import javax.swing.*;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,11 +27,11 @@ public class Board
 	this.fallingPos = null;
 	this.tetrominoMaker = new TetrominoMaker();
 	this.squareTypeCount = this.tetrominoMaker.getNumberOfTypes();
-	this.squares = new SquareType[height][width];
-	fillDefaultBoard();
+	initDefaultBoard();
     }
 
-    private void fillDefaultBoard() {
+    private void initDefaultBoard() {
+	squares = new SquareType[height][width];
 	for (SquareType[] row : squares) {
 	    Arrays.fill(row, SquareType.EMPTY);
 	}
@@ -56,7 +57,7 @@ public class Board
 
     public void tick() {
 	if (falling != null && fallingPos != null) {
-	    moveFalling(fallingPos.x, fallingPos.y + 1);
+	    translateFalling(0, 1);
 	} else {
 	    setFalling(RND.nextInt(1, squareTypeCount));
 	}
@@ -70,8 +71,18 @@ public class Board
 	fallingPos = new Point((width - falling.getWidth()) / 2, 0);
     }
 
-    private void moveFalling(final int x, final int y) {
-	fallingPos.move(x, y);
+    private void translateFalling(final int dx, final int dy) {
+	fallingPos.translate(dx, dy);
+    }
+
+    public void move(Direction direction) {
+	switch (direction) {
+	    case LEFT -> translateFalling(-1, 0);
+	    case RIGHT -> translateFalling(1, 0);
+	    default -> throw new IllegalArgumentException("Invalid move direction");
+	}
+
+	notifyListeners();
     }
 
     public void randomizeBoard() {
