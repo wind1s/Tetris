@@ -5,34 +5,17 @@ import java.util.Random;
 public enum SquareType
 {
 
-    EMPTY, I, O, T, S, Z, J, L;
-    public static final int TYPE_COUNT = 7;
+    EMPTY, OUTSIDE, I, O, T, S, Z, J, L;
 
     public static int getTypeCount() {
-	return TYPE_COUNT;
+	return SquareType.values().length;
     }
 
     public static SquareType fromInteger(final int n) {
-	switch (n) {
-	    case 0:
-		return EMPTY;
-	    case 1:
-		return I;
-	    case 2:
-		return O;
-	    case 3:
-		return T;
-	    case 4:
-		return S;
-	    case 5:
-		return Z;
-	    case 6:
-		return J;
-	    case 7:
-		return L;
-	    default:
-		throw new IllegalArgumentException("Illegal SquareType: " + n);
+	if (n < 0 || n >= getTypeCount()) {
+	    throw new IllegalArgumentException("Illegal SquareType: " + n);
 	}
+	return SquareType.values()[n];
     }
 
     public static void main(String[] args) {
