@@ -5,7 +5,7 @@ import java.util.Random;
 public enum SquareType
 {
 
-    EMPTY, OUTSIDE, I, O, T, S, Z, J, L;
+    I, O, T, S, Z, J, L, EMPTY, OUTSIDE;
 
     public static int getTypeCount() {
 	return SquareType.values().length;

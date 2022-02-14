@@ -24,7 +24,6 @@ public class OldTetrisViewer
 	frame.pack();
 	frame.setVisible(true);
 
-
 	final Action doOneStep = new AbstractAction()
 	{
 	    public void actionPerformed(ActionEvent e) {

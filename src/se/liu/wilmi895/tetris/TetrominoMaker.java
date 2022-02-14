@@ -1,10 +1,10 @@
 package se.liu.wilmi895.tetris;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class TetrominoMaker
 {
-
     public int getNumberOfTypes() {
 	return SquareType.getTypeCount();
     }
