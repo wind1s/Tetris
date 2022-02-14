@@ -45,10 +45,14 @@ public class TetrisViewer
 	final InputMap inputMap = pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 	inputMap.put(KeyStroke.getKeyStroke("LEFT"), "move_left");
 	inputMap.put(KeyStroke.getKeyStroke("RIGHT"), "move_right");
+	inputMap.put(KeyStroke.getKeyStroke("DOWN"), "rotate_left");
+	inputMap.put(KeyStroke.getKeyStroke("UP"), "rotate_right");
 
 	final ActionMap actionMap = pane.getActionMap();
 	actionMap.put("move_left", new MoveAction(Direction.LEFT));
 	actionMap.put("move_right", new MoveAction(Direction.RIGHT));
+	actionMap.put("rotate_left", new RotateAction(Direction.LEFT));
+	actionMap.put("rotate_right", new RotateAction(Direction.RIGHT));
     }
 
     private class MoveAction extends AbstractAction
@@ -62,5 +66,18 @@ public class TetrisViewer
 	@Override public void actionPerformed(final ActionEvent e) {
 	    tetrisBoard.move(direction);
 	}
+    }
+
+    private class RotateAction extends AbstractAction {
+	private final Direction direction;
+
+	private RotateAction(final Direction direction) {
+	    this.direction = direction;
+	}
+
+	@Override public void actionPerformed(final ActionEvent e) {
+	    tetrisBoard.rotate(direction);
+	}
+
     }
 }

@@ -157,6 +157,8 @@ public class Board
 	}
     }
 
+    public void rotate(Direction direction) {}
+
     public SquareType getSquare(final int x, final int y) {
 	if (outsideBoard(x, y)) {
 	    throw new IllegalArgumentException("X and Y is out of bounds");
