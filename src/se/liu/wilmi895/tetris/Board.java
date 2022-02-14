@@ -2,6 +2,7 @@ package se.liu.wilmi895.tetris;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -43,10 +44,16 @@ public class Board
 		    setSquare(x, y, SquareType.OUTSIDE);
 
 		} else {
-		    setSquare(x, y, SquareType.EMPTY);
+		    if (y == 16) {
+			setSquare(x, y, SquareType.I);
+		    } else {
+			setSquare(x, y, SquareType.EMPTY);
+		    }
 		}
 	    }
 	}
+
+	//setSquare(2, 16, SquareType.EMPTY);
     }
 
     public int getWidth() {
@@ -59,6 +66,31 @@ public class Board
 
     private void setSquare(final int x, final int y, final SquareType squareType) {
 	squares[y][x] = squareType;
+    }
+
+    public SquareType getSquare(final int x, final int y) {
+	if (outsideBoard(x, y)) {
+	    throw new IllegalArgumentException(String.format("%d (x) and %d (y) is out of bounds", x, y));
+	}
+
+	return squares[y + MARGIN][x + MARGIN];
+    }
+
+    public SquareType getVisibleSquare(final int x, final int y) {
+	if (hasFallingTetromino()) {
+	    final int xDiff = x - fallingPos.x + MARGIN;
+	    final int yDiff = y - fallingPos.y + MARGIN;
+
+	    if (xDiff >= 0 && xDiff < fallingSize && yDiff >= 0 && yDiff < fallingSize) {
+		final SquareType square = falling.getSquare(xDiff, yDiff);
+
+		if (square != SquareType.EMPTY) {
+		    return square;
+		}
+	    }
+	}
+
+	return getSquare(x, y);
     }
 
     public void addBoardListener(BoardListener bl) {
@@ -82,6 +114,7 @@ public class Board
 		    placeFallingOnBoard();
 		    falling = null;
 		    fallingPos = null;
+		    removeFullRows();
 		}
 
 	    } else {
@@ -94,13 +127,47 @@ public class Board
 	}
     }
 
+    private void removeFullRows() {
+	int nonEmptyCount = 0;
+	// Determines how many rows up a row should copy its squares from.
+	int filledRows = 0;
+	// Determines from what row to move all rows down to.
+	int filledRowNum = -1;
+
+	for (int y = 0; y < height; ++y) {
+	    for (int x = 0; x < width; ++x) {
+		if (getSquare(x, y) != SquareType.EMPTY) {
+		    nonEmptyCount++;
+		} else {
+		    break;
+		}
+	    }
+
+	    // Implies that the entire row is filled.
+	    if(nonEmptyCount == width) {
+		filledRows++;
+		filledRowNum = y;
+	    }
+	    nonEmptyCount = 0;
+	}
+
+	if (filledRows >= 1) {
+	    // Move squares down starting from the where the first row starts.
+	    for (int y = filledRowNum; y >= filledRows; --y) {
+		for (int x = 0; x < width; ++x) {
+		    setSquare(x + MARGIN, y + MARGIN, getSquare(x, y - filledRows));
+		}
+	    }
+	}
+    }
+
     private void placeFallingOnBoard() {
 	for (int y = 0; y < fallingSize; y++) {
 	    for (int x = 0; x < fallingSize; x++) {
-		final SquareType squareType = falling.getSquare(x, y);
+		final SquareType square = falling.getSquare(x, y);
 
-		if (squareType != SquareType.EMPTY) {
-		    setSquare(fallingPos.x + x, fallingPos.y + y, squareType);
+		if (square != SquareType.EMPTY) {
+		    setSquare(fallingPos.x + x, fallingPos.y + y, square);
 		}
 	    }
 	}
@@ -173,31 +240,6 @@ public class Board
 		notifyListeners();
 	    }
 	}
-    }
-
-    public SquareType getSquare(final int x, final int y) {
-	if (outsideBoard(x, y)) {
-	    throw new IllegalArgumentException("X and Y is out of bounds");
-	}
-
-	return squares[y + MARGIN][x + MARGIN];
-    }
-
-    public SquareType getVisibleSquare(final int x, final int y) {
-	if (hasFallingTetromino()) {
-	    final int xDiff = x - fallingPos.x + MARGIN;
-	    final int yDiff = y - fallingPos.y + MARGIN;
-
-	    if (xDiff >= 0 && xDiff < fallingSize && yDiff >= 0 && yDiff < fallingSize) {
-		final SquareType square = falling.getSquare(xDiff, yDiff);
-
-		if (square != SquareType.EMPTY) {
-		    return square;
-		}
-	    }
-	}
-
-	return getSquare(x, y);
     }
 
     private boolean hasFallingTetromino() {
