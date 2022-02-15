@@ -6,7 +6,7 @@ import java.util.Random;
 public class TetrominoMaker
 {
     public int getNumberOfTypes() {
-	return SquareType.getTypeCount();
+	return SquareType.getTypeCount() - SquareType.NON_TETROMINO_COUNT;
     }
 
     public Poly getPoly(final int n) {

@@ -6,6 +6,7 @@ public enum SquareType
 {
 
     I, O, T, S, Z, J, L, EMPTY, OUTSIDE;
+    public final static int NON_TETROMINO_COUNT = 2;
 
     public static int getTypeCount() {
 	return SquareType.values().length;

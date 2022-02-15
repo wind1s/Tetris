@@ -7,16 +7,18 @@ import java.awt.event.ActionEvent;
 public class TetrisViewer
 {
     private Board tetrisBoard;
-    private JFrame frame;
+    private JFrame frame = null;
+    private String frameTitle;
     private TetrisComponent tetrisComponent;
 
     public TetrisViewer(final String frameTitle, final Board tetrisBoard) {
 	this.tetrisBoard = tetrisBoard;
-	this.frame = new JFrame(frameTitle);
+	this.frameTitle = frameTitle;
 	this.tetrisComponent = new TetrisComponent(tetrisBoard);
     }
 
     public void show() {
+	frame = new JFrame(frameTitle);
 	initFrameSettings();
 	initKeyBindings();
 
@@ -70,7 +72,8 @@ public class TetrisViewer
 	}
     }
 
-    private class RotateAction extends AbstractAction {
+    private class RotateAction extends AbstractAction
+    {
 	private final Direction direction;
 
 	private RotateAction(final Direction direction) {
