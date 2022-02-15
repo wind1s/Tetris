@@ -99,12 +99,9 @@ public class Board
 	}
 
 	if (hasFallingTetromino()) {
-	    final int dy = 1;
-	    translateFalling(0, dy);
-
+	    final boolean hasCollided = move(Direction.DOWN);
 	    // Check if the bottom of the falling tetromino area has collided with something.
-	    if (hasCollision()) {
-		translateFalling(0, -dy);
+	    if (hasCollided) {
 		placeFallingOnBoard();
 		removeFullRows();
 	    }
@@ -202,9 +199,9 @@ public class Board
 	       squares[fallingPos.y + y][fallingPos.x + x] != SquareType.EMPTY;
     }
 
-    public void move(Direction direction) {
+    public boolean move(Direction direction) {
 	if (!hasFallingTetromino()) {
-	    return;
+	    return false;
 	}
 	int dx = 0;
 	int dy = 0;
@@ -212,16 +209,19 @@ public class Board
 	switch (direction) {
 	    case LEFT -> dx = -1;
 	    case RIGHT -> dx = 1;
-	    //case DOWN -> dy = 1;
+	    case DOWN -> dy = 1;
 	    default -> throw new IllegalArgumentException("Invalid move direction");
 	}
 	translateFalling(dx, dy);
 	// If a collision occurs move the tetromino back. No need to notify listeners in this case.
-	if (hasCollision()) {
+	final boolean hasCollided = hasCollision();
+	if (hasCollided) {
 	    translateFalling(-dx, -dy);
 	} else {
 	    notifyListeners();
 	}
+
+	return hasCollided;
     }
 
     public void rotate(Direction direction) {

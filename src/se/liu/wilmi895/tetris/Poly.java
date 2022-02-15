@@ -27,8 +27,8 @@ public class Poly
 	SquareType[][] newShape = new SquareType[size][size];
 
 	for (int r = 0; r < size; ++r) {
-	    for (int c = 0; c < size; ++c){
-		newShape[c][size-1-r] = shape[r][c];
+	    for (int c = 0; c < size; ++c) {
+		newShape[c][size - 1 - r] = shape[r][c];
 	    }
 	}
 
@@ -39,8 +39,8 @@ public class Poly
 	SquareType[][] newShape = new SquareType[size][size];
 
 	for (int l = 0; l < size; ++l) {
-	    for (int c = 0; c < size; ++c){
-		newShape[l][c] = shape[c][size-1-l];
+	    for (int c = 0; c < size; ++c) {
+		newShape[l][c] = shape[c][size - 1 - l];
 	    }
 	}
 
