@@ -9,7 +9,7 @@ import java.util.EnumMap;
 
 public class TetrisComponent extends JComponent implements BoardListener
 {
-    private final static int SQUARE_PIXEL_SIZE = 35;
+    private final static int SQUARE_PIXEL_SIZE = 50;
     private final EnumMap<SquareType, Color> squareColors = createColorMap();
     private Board board;
     private int boardWidth;
@@ -30,11 +30,11 @@ public class TetrisComponent extends JComponent implements BoardListener
 	final Graphics2D g2d = (Graphics2D) g;
 	final Dimension componentDimension = this.getSize();
 	final int squareHeight = componentDimension.height / boardHeight;
-	//final int squareWidth = componentDimension.width / boardWidth;
+	final int squareWidth = componentDimension.height / boardHeight;
 
 	for (int x = 0; x < boardWidth; x++) {
 	    for (int y = 0; y < boardHeight; y++) {
-		paintSquare(x, y, squareHeight, squareHeight, g2d);
+		paintSquare(x, y, squareWidth, squareHeight, g2d);
 	    }
 	}
     }

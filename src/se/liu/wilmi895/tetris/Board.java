@@ -107,7 +107,7 @@ public class Board
 	    }
 
 	} else {
-	    setFalling(RND.nextInt(0, tetrominoMaker.getNumberOfTypes() - 2));
+	    setFalling(RND.nextInt(0, tetrominoMaker.getNumberOfTypes()));
 	    // If a newly spawned tetromino collides immediately, its game over.
 	    gameOver = hasCollision();
 	}
