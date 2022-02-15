@@ -31,6 +31,8 @@ public class TetrisViewer
 	final Timer clockTimer = new Timer(750, doOneStep);
 	clockTimer.setCoalesce(true);
 	clockTimer.start();
+	// Tetris 5.7: Add an action listener to timer which notifies board about the timer to speed up tetris.
+	// clockTimer.addActionListener();
     }
 
     private void initFrameSettings() {

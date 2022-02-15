@@ -16,20 +16,16 @@ public class Board
     private SquareType[][] squares;
     private int width;
     private int height;
-    private Poly falling;
-    private Point fallingPos;
-    private int fallingSize;
-    private TetrominoMaker tetrominoMaker;
-    private boolean gameOver;
+    private Poly falling = null;
+    private Point fallingPos = null;
+    private int fallingSize = 0;
+    private TetrominoMaker tetrominoMaker = new TetrominoMaker();
+    ;
+    private boolean gameOver = false;
 
     public Board(final int width, final int height) {
 	this.width = width;
 	this.height = height;
-	this.falling = null;
-	this.fallingPos = null;
-	this.fallingSize = 0;
-	this.tetrominoMaker = new TetrominoMaker();
-	this.gameOver = false;
 	initDefaultBoard();
     }
 
@@ -104,59 +100,67 @@ public class Board
     }
 
     public void tick() {
-	if (!gameOver) {
-	    if (hasFallingTetromino()) {
-		translateFalling(0, 1);
+	if (gameOver) {
+	    return;
+	}
 
-		// Check if the bottom of the falling tetromino area has collided with something.
-		if (hasCollision()) {
-		    translateFalling(0, -1);
-		    placeFallingOnBoard();
-		    falling = null;
-		    fallingPos = null;
-		    removeFullRows();
-		}
+	if (hasFallingTetromino()) {
+	    final int dy = 1;
+	    translateFalling(0, dy);
 
-	    } else {
-		setFalling(RND.nextInt(0, tetrominoMaker.getNumberOfTypes() - 2));
-		// If a newly spawned tetromino collides immediately, its game over.
-		gameOver = hasCollision();
+	    // Check if the bottom of the falling tetromino area has collided with something.
+	    if (hasCollision()) {
+		translateFalling(0, -dy);
+		placeFallingOnBoard();
+		falling = null;
+		fallingPos = null;
+		removeFullRows();
 	    }
 
-	    notifyListeners();
+	} else {
+	    //setFalling(RND.nextInt(0, tetrominoMaker.getNumberOfTypes() - 2));
+	    setFalling(6);
+	    // If a newly spawned tetromino collides immediately, its game over.
+	    gameOver = hasCollision();
 	}
+
+	notifyListeners();
     }
 
-    private void removeFullRows() {
-	int nonEmptyCount = 0;
-	// Determines how many rows up a row should copy its squares from.
+    private int removeFullRows() {
 	int filledRows = 0;
-	// Determines from what row to move all rows down to.
-	int filledRowNum = -1;
 
-	for (int y = 0; y < height; ++y) {
-	    for (int x = 0; x < width; ++x) {
-		if (getSquare(x, y) != SquareType.EMPTY) {
-		    nonEmptyCount++;
-		} else {
-		    break;
-		}
-	    }
-
-	    // Implies that the entire row is filled.
-	    if(nonEmptyCount == width) {
+	for (int row = 0; row < height; ) {
+	    if (isFullRow(row)) {
+		moveRowsDown(row);
 		filledRows++;
-		filledRowNum = y;
+
+	    } else {
+		row++;
 	    }
-	    nonEmptyCount = 0;
 	}
 
-	if (filledRows >= 1) {
-	    // Move squares down starting from the where the first row starts.
-	    for (int y = filledRowNum; y >= filledRows; --y) {
-		for (int x = 0; x < width; ++x) {
-		    setSquare(x + MARGIN, y + MARGIN, getSquare(x, y - filledRows));
-		}
+	return filledRows;
+    }
+
+    private boolean isFullRow(final int row) {
+	int nonEmptyCount = 0;
+
+	for (int col = 0; col < width; ++col) {
+	    if (getSquare(col, row) != SquareType.EMPTY) {
+		nonEmptyCount++;
+	    } else {
+		break;
+	    }
+	}
+
+	return nonEmptyCount == width;
+    }
+
+    private void moveRowsDown(final int rowToRemove) {
+	for (int row = rowToRemove; row >= 1; --row) {
+	    for (int col = 0; col < width; ++col) {
+		setSquare(col + MARGIN, row + MARGIN, getSquare(col, row - 1));
 	    }
 	}
     }
@@ -202,43 +206,45 @@ public class Board
     }
 
     public void move(Direction direction) {
-	if (hasFallingTetromino()) {
-	    int dx = 0;
-	    int dy = 0;
-
-	    switch (direction) {
-		case LEFT -> dx = -1;
-		case RIGHT -> dx = 1;
-		default -> throw new IllegalArgumentException("Invalid move direction");
-	    }
-	    translateFalling(dx, dy);
-	    // If a collision occurs move the tetromino back. No need to notify listeners in this case.
-	    if (hasCollision()) {
-		translateFalling(-dx, dy);
-	    }
-
-	    notifyListeners();
+	if (!hasFallingTetromino()) {
+	    return;
 	}
+	int dx = 0;
+	int dy = 0;
+
+	switch (direction) {
+	    case LEFT -> dx = -1;
+	    case RIGHT -> dx = 1;
+	    default -> throw new IllegalArgumentException("Invalid move direction");
+	}
+	translateFalling(dx, dy);
+	// If a collision occurs move the tetromino back. No need to notify listeners in this case.
+	if (hasCollision()) {
+	    translateFalling(-dx, dy);
+	}
+
+	notifyListeners();
     }
 
     public void rotate(Direction direction) {
-	if (hasFallingTetromino()) {
-	    Poly rotatedFalling = null;
+	if (!hasFallingTetromino()) {
+	    return;
+	}
+	Poly rotatedFalling = null;
 
-	    switch (direction) {
-		case LEFT -> rotatedFalling = falling.rotatedLeft();
-		case RIGHT -> rotatedFalling = falling.rotatedRight();
-		default -> throw new IllegalArgumentException("Invalid rotate direction");
-	    }
+	switch (direction) {
+	    case LEFT -> rotatedFalling = falling.rotatedLeft();
+	    case RIGHT -> rotatedFalling = falling.rotatedRight();
+	    default -> throw new IllegalArgumentException("Invalid rotate direction");
+	}
 
-	    final Poly oldFalling = falling;
-	    falling = rotatedFalling;
+	final Poly oldFalling = falling;
+	falling = rotatedFalling;
 
-	    if (hasCollision()) {
-		falling = oldFalling;
-	    } else {
-		notifyListeners();
-	    }
+	if (hasCollision()) {
+	    falling = oldFalling;
+	} else {
+	    notifyListeners();
 	}
     }
 
