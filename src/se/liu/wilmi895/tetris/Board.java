@@ -2,6 +2,7 @@ package se.liu.wilmi895.tetris;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -28,21 +29,21 @@ public class Board
     }
 
     private void initDefaultBoard() {
-	final int widthWithMargins = width + DOUBLE_MARGIN;
-	final int heightWithMargins = height + DOUBLE_MARGIN;
-	squares = new SquareType[heightWithMargins][widthWithMargins];
+	squares = new SquareType[height + DOUBLE_MARGIN][width + DOUBLE_MARGIN];
 
-	for (int y = 0; y < heightWithMargins; ++y) {
-	    for (int x = 0; x < widthWithMargins; ++x) {
-		// x or y is outside the visible board, put a OUTSIDE type there.
-		if (x < MARGIN || x >= width + MARGIN || y < MARGIN || y >= height + MARGIN) {
-		    setSquare(x, y, SquareType.OUTSIDE);
-
-		} else {
-		    setSquare(x, y, SquareType.EMPTY);
-		}
+	for (int y = 0; y < height + DOUBLE_MARGIN; ++y) {
+	    if (y < MARGIN || y >= height + MARGIN) {
+		Arrays.fill(squares[y], SquareType.OUTSIDE);
+	    } else {
+		fillVisibleRowDefault(squares[y]);
 	    }
 	}
+    }
+
+    private void fillVisibleRowDefault(SquareType[] row) {
+	Arrays.fill(row, 0, MARGIN, SquareType.OUTSIDE);
+	Arrays.fill(row, MARGIN, width + MARGIN, SquareType.EMPTY);
+	Arrays.fill(row, width + MARGIN, width + DOUBLE_MARGIN, SquareType.OUTSIDE);
     }
 
     public int getWidth() {
@@ -105,7 +106,6 @@ public class Board
 		placeFallingOnBoard();
 		removeFullRows();
 	    }
-
 	} else {
 	    setFalling(RND.nextInt(0, tetrominoMaker.getNumberOfTypes()));
 	    // If a newly spawned tetromino collides immediately, its game over.
@@ -139,7 +139,7 @@ public class Board
 	    if (getSquare(col, row) != SquareType.EMPTY) {
 		nonEmptyCount++;
 	    } else {
-		// If a row is EMPTY then we break as there can't be a full row.
+		// If a row is EMPTY then we break as the row isnt full.
 		break;
 	    }
 	}
@@ -148,12 +148,11 @@ public class Board
     }
 
     private void moveRowsDown(final int rowToRemove) {
-	for (int row = rowToRemove; row >= 1; --row) {
+	for (int row = rowToRemove + MARGIN; row >= 1 + MARGIN; --row) {
 	    // Get the SquareType above the current column to effectivly move a row down.
-	    for (int col = 0; col < width; ++col) {
-		setSquare(col + MARGIN, row + MARGIN, getSquare(col, row - 1));
-	    }
+	    squares[row] = squares[row - 1];
 	}
+	fillVisibleRowDefault(squares[MARGIN]);
     }
 
     private void placeFallingOnBoard() {
