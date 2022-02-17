@@ -152,6 +152,7 @@ public class Board
 	    // Get the SquareType above the current column to effectivly move a row down.
 	    squares[row] = squares[row - 1];
 	}
+	squares[MARGIN] = new SquareType[width + DOUBLE_MARGIN];
 	fillVisibleRowDefault(squares[MARGIN]);
     }
 
