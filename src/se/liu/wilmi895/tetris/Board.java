@@ -133,18 +133,14 @@ public class Board
     }
 
     private boolean isFullRow(final int row) {
-	int nonEmptyCount = 0;
 
 	for (int col = 0; col < width; ++col) {
-	    if (getSquare(col, row) != SquareType.EMPTY) {
-		nonEmptyCount++;
-	    } else {
-		// If a row is EMPTY then we break as the row isnt full.
-		break;
+	    if (getSquare(col, row) == SquareType.EMPTY) {
+		return false;
 	    }
 	}
 
-	return nonEmptyCount == width;
+	return true;
     }
 
     private void moveRowsDown(final int rowToRemove) {
