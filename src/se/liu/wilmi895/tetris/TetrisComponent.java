@@ -1,6 +1,6 @@
 package se.liu.wilmi895.tetris;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
@@ -19,6 +19,10 @@ public class TetrisComponent extends JComponent implements BoardListener
 	this.board = board;
 	this.boardWidth = board.getWidth();
 	this.boardHeight = board.getHeight();
+    }
+
+    @Override public void boardChanged() {
+	repaint();
     }
 
     @Override public Dimension getPreferredSize() {
@@ -63,9 +67,5 @@ public class TetrisComponent extends JComponent implements BoardListener
 	colorMap.put(SquareType.L, Color.ORANGE);
 
 	return colorMap;
-    }
-
-    @Override public void boardChanged() {
-	repaint();
     }
 }
