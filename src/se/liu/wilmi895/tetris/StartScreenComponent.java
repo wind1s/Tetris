@@ -15,6 +15,7 @@ public class StartScreenComponent extends JComponent
     }
 
     @Override protected void paintComponent(final Graphics g) {
+	super.paintComponent(g);
 	final Graphics2D g2d = (Graphics2D) g;
 	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 

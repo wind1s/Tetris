@@ -1,19 +1,17 @@
 package se.liu.wilmi895.tetris;
 
 import javax.swing.*;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Graphics;
-import java.awt.Color;
+import java.awt.*;
 import java.util.EnumMap;
 
 public class TetrisComponent extends JComponent implements BoardListener
 {
-    private final static int SQUARE_PIXEL_SIZE = 50;
+    public final static int SQUARE_SIZE = 50;
     private final EnumMap<SquareType, Color> squareColors = createColorMap();
     private final Board tetrisBoard;
     private final int boardWidth;
     private final int boardHeight;
+    private final ScoreCounter scoreCounter = new ScoreCounter();
 
     public TetrisComponent(final Board board) {
 	this.tetrisBoard = board;
@@ -23,10 +21,11 @@ public class TetrisComponent extends JComponent implements BoardListener
 
     @Override public void boardChanged() {
 	repaint();
+	scoreCounter.increaseScore(tetrisBoard.rowsLastRemoved());
     }
 
     @Override public Dimension getPreferredSize() {
-	return new Dimension(tetrisBoard.getWidth() * SQUARE_PIXEL_SIZE, tetrisBoard.getHeight() * SQUARE_PIXEL_SIZE);
+	return new Dimension(boardWidth * SQUARE_SIZE, boardHeight * SQUARE_SIZE);
     }
 
     @Override protected void paintComponent(final Graphics g) {
@@ -36,11 +35,15 @@ public class TetrisComponent extends JComponent implements BoardListener
 	final int squareHeight = componentDimension.height / boardHeight;
 	final int squareWidth = componentDimension.height / boardHeight;
 
-	for (int x = 0; x < boardWidth; x++) {
-	    for (int y = 0; y < boardHeight; y++) {
+	for (int y = 0; y < boardHeight; ++y) {
+	    for (int x = 0; x < boardWidth; ++x) {
 		paintSquare(x, y, squareWidth, squareHeight, g2d);
 	    }
 	}
+
+	g2d.setColor(Color.CYAN);
+	g2d.setFont(new Font("Monospaced", Font.PLAIN,  squareWidth / 3));
+	g2d.drawString(String.format("Score: %d", scoreCounter.getScore()), squareWidth, squareHeight);
     }
 
     private void paintSquare(final int x, final int y, final int squareWidth, final int squareHeight,
@@ -48,7 +51,6 @@ public class TetrisComponent extends JComponent implements BoardListener
     {
 	final int xDrawPos = x * squareWidth;
 	final int yDrawPos = y * squareHeight;
-
 
 	g.setColor(squareColors.get(tetrisBoard.getVisibleSquare(x, y)));
 	g.fill3DRect(xDrawPos, yDrawPos, squareWidth, squareHeight, true);

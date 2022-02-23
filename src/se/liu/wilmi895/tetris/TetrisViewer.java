@@ -68,8 +68,9 @@ public class TetrisViewer
     }
 
     private void initFrame() {
-	addViewComponent(FrameComponent.TETRIS_BOARD);
-	addViewComponent(FrameComponent.START_SCREEN);
+	addFrameComponent(FrameComponent.TETRIS_BOARD, BorderLayout.CENTER);
+	addFrameComponent(FrameComponent.START_SCREEN, BorderLayout.CENTER);
+
 	frame.setLayout(frameLayout);
 
 	tetrisMenuBar.initMenuBar();
@@ -77,10 +78,10 @@ public class TetrisViewer
 	frame.pack();
     }
 
-    private void addViewComponent(final FrameComponent component) {
+    private void addFrameComponent(final FrameComponent component, final Object constraints) {
 	final JComponent viewComponent = componentMap.get(component);
 	frameLayout.addLayoutComponent(viewComponent, component.name());
-	frame.add(viewComponent, BorderLayout.CENTER);
+	frame.add(viewComponent, constraints);
     }
 
     public void showFrameComponent(final FrameComponent component) {

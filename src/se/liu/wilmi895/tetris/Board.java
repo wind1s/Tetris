@@ -1,8 +1,6 @@
 package se.liu.wilmi895.tetris;
 
-import javax.swing.*;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,18 +8,20 @@ import java.util.Random;
 
 public class Board
 {
+
     private final static Random RND = new Random();
     private final static int MARGIN = 2;
     private final static int DOUBLE_MARGIN = MARGIN * 2;
 
     private final List<BoardListener> boardListeners = new ArrayList<>();
     private final TetrominoMaker tetrominoMaker = new TetrominoMaker();
-    private SquareType[][] squares;
+    private SquareType[][] squares = null;
     private final int width;
     private final int height;
     private Poly falling = null;
     private Point fallingPos = null;
     private int fallingSize = 0;
+    private int rowsLastRemoved = 0;
     private boolean gameOver = false;
     private boolean isPaused = false;
 
@@ -55,6 +55,12 @@ public class Board
 
     public int getHeight() {
 	return height;
+    }
+
+    public int rowsLastRemoved() {
+	final int rowsRemoved = rowsLastRemoved;
+	rowsLastRemoved = 0;
+	return rowsRemoved;
     }
 
     private void setSquare(final int x, final int y, final SquareType squareType) {
@@ -118,21 +124,17 @@ public class Board
 	notifyListeners();
     }
 
-    private int removeFullRows() {
-	int filledRows = 0;
-
+    private void removeFullRows() {
+	rowsLastRemoved = 0;
 	for (int row = 0; row < height; ) {
 	    // If the row is full, move all rows down effectively removing that row.
 	    if (isFullRow(row)) {
 		moveRowsDown(row);
-		filledRows++;
-
+		rowsLastRemoved++;
 	    } else {
 		row++;
 	    }
 	}
-
-	return filledRows;
     }
 
     private boolean isFullRow(final int row) {
