@@ -8,28 +8,64 @@ import java.util.TreeMap;
 
 public class TetrisAction
 {
+    private final AbstractAction quitAction = new QuitAction();
+    private final AbstractAction restartAction = new RestartAction();
     private final Board tetrisBoard;
     private final JFrame frame;
     private final String frameTitle;
+    private final ScoreCounter scoreCounter;
 
-    public TetrisAction(final Board tetrisBoard, final JFrame frame, final String frameTitle) {
+    public TetrisAction(Board tetrisBoard, final JFrame frame, final String frameTitle, final ScoreCounter scoreCounter)
+    {
 	this.tetrisBoard = tetrisBoard;
 	this.frame = frame;
 	this.frameTitle = frameTitle;
+	this.scoreCounter = scoreCounter;
     }
 
     public AbstractAction createAction(final GameAction action, final Object... params) {
 	switch (action) {
 	    case MOVE:
+		badVarArgsParameter(1, params, "MoveAction");
 		return new MoveAction((Direction) params[0]);
 	    case ROTATE:
+		badVarArgsParameter(1, params, "RotateAction");
 		return new RotateAction((Direction) params[0]);
 	    case QUIT:
 		return new QuitAction();
 	    case PAUSE:
 		return new PauseAction();
+	    case RESTART:
+		return new RestartAction();
 	    default:
-		throw new IllegalArgumentException("Invalid movement action: " + action.name());
+		throw new IllegalArgumentException("Invalid movement action: " + action);
+	}
+    }
+
+    private void badVarArgsParameter(final int numRequiredArgs, final Object[] params, final String actionName) {
+	if (numRequiredArgs < params.length) {
+	    throw new IllegalArgumentException(
+		    String.format("%d missing arguments for %s construction", params.length - numRequiredArgs,
+				  actionName));
+	}
+    }
+
+    private class RestartAction extends AbstractAction
+    {
+
+	private final SortedMap<Integer, String> restartOptionMap = createOptionMap(new String[] { "Yes", "No" });
+
+	@Override public void actionPerformed(final ActionEvent e) {
+	    int optionChosen =
+		    showOptionDialog("Restart game?", JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION,
+				     restartOptionMap, null);
+
+	    switch (getOptionString(optionChosen, restartOptionMap)) {
+		case "No" -> quitAction.actionPerformed(null);
+	    }
+
+	    scoreCounter.resetScore();
+	    tetrisBoard.restartGame();
 	}
     }
 
@@ -46,7 +82,7 @@ public class TetrisAction
 	}
 
 	@Override public String toString() {
-	    return "MOVE_" + direction.name();
+	    return GameAction.MOVE.name() + direction.name();
 	}
     }
 
@@ -63,7 +99,7 @@ public class TetrisAction
 	}
 
 	@Override public String toString() {
-	    return "ROTATE_" + direction.name();
+	    return GameAction.ROTATE.name() + direction.name();
 	}
     }
 
@@ -76,7 +112,7 @@ public class TetrisAction
 	    int optionChosen = showOptionDialog("Quit game?", JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION,
 						quitOptionMap, null);
 
-	    switch (quitOptionMap.getOrDefault(optionChosen, "")) {
+	    switch (getOptionString(optionChosen, quitOptionMap)) {
 		case "Yes" -> System.exit(0);
 		default -> tetrisBoard.pauseGame(false);
 	    }
@@ -85,8 +121,8 @@ public class TetrisAction
 
     private class PauseAction extends AbstractAction
     {
-	private final SortedMap<Integer, String> pauseOptionMap = createOptionMap(new String[] { "Play", "Quit" });
-	private final AbstractAction quitAction = new QuitAction();
+	private final SortedMap<Integer, String> pauseOptionMap =
+		createOptionMap(new String[] { "Play", "Restart", "Quit" });
 
 	@Override public void actionPerformed(final ActionEvent e) {
 	    tetrisBoard.pauseGame(true);
@@ -94,7 +130,8 @@ public class TetrisAction
 		    showOptionDialog("Game paused", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION,
 				     pauseOptionMap, null);
 
-	    switch (pauseOptionMap.getOrDefault(optionChosen, "")) {
+	    switch (getOptionString(optionChosen, pauseOptionMap)) {
+		case "Restart" -> restartAction.actionPerformed(null);
 		case "Quit" -> quitAction.actionPerformed(null);
 		default -> tetrisBoard.pauseGame(false);
 	    }
@@ -120,5 +157,9 @@ public class TetrisAction
     {
 	return JOptionPane.showOptionDialog(frame, message, frameTitle, optionType, messageType, icon,
 					    optionMap.values().toArray(), null);
+    }
+
+    private String getOptionString(final int optionChosen, final SortedMap<Integer, String> optionMap) {
+	return optionMap.getOrDefault(optionChosen, "");
     }
 }

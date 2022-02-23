@@ -13,10 +13,14 @@ public class TetrisMenuBar
 
     public void initMenuBar() {
 	menuBar = new JMenuBar();
-	final JMenuItem quit = createMenuItem("quit", GameAction.QUIT);
-	final JMenuItem togglePause = createMenuItem("pause", GameAction.PAUSE);
-	menuBar.add(togglePause);
+	final JMenuItem quit = createMenuItem("Quit", GameAction.QUIT);
+	final JMenuItem pause = createMenuItem("Pause", GameAction.PAUSE);
+	final JMenuItem restart = createMenuItem("Restart", GameAction.RESTART);
+	menuBar.add(pause);
+	menuBar.add(restart);
 	menuBar.add(quit);
+	menuBar.add(Box.createHorizontalGlue());
+	menuBar.add(Box.createHorizontalGlue());
     }
 
     public JMenuBar getMenuBar() {

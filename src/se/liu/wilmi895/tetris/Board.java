@@ -63,6 +63,21 @@ public class Board
 	return rowsRemoved;
     }
 
+    public boolean isGameOver() {
+	return gameOver;
+    }
+
+    public void restartGame() {
+	initDefaultBoard();
+	pauseGame(false);
+	falling = null;
+	fallingPos = null;
+	fallingSize = 0;
+	gameOver = false;
+
+	notifyListeners();
+    }
+
     private void setSquare(final int x, final int y, final SquareType squareType) {
 	squares[y][x] = squareType;
     }
@@ -104,7 +119,7 @@ public class Board
     }
 
     public void tick() {
-	if (gameOver || isPaused) {
+	if (isPaused || gameOver) {
 	    return;
 	}
 

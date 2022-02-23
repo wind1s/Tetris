@@ -9,12 +9,13 @@ public class TetrisComponent extends JComponent implements BoardListener
     public final static int SQUARE_SIZE = 50;
     private final EnumMap<SquareType, Color> squareColors = createColorMap();
     private final Board tetrisBoard;
+    private final ScoreCounter scoreCounter;
     private final int boardWidth;
     private final int boardHeight;
-    private final ScoreCounter scoreCounter = new ScoreCounter();
 
-    public TetrisComponent(final Board board) {
+    public TetrisComponent(final Board board, final ScoreCounter scoreCounter) {
 	this.tetrisBoard = board;
+	this.scoreCounter = scoreCounter;
 	this.boardWidth = board.getWidth();
 	this.boardHeight = board.getHeight();
     }

@@ -4,26 +4,31 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.EnumMap;
+import java.util.concurrent.TimeUnit;
 
 public class TetrisViewer
 {
     private final Board tetrisBoard;
     private final String frameTitle;
-    private EnumMap<FrameComponent, JComponent> componentMap = null;
-    private FrameComponent visibleComponent = FrameComponent.NONE;
+    private final HighscoreList highscoreList;
+    private final ScoreCounter scoreCounter = new ScoreCounter();
+    private EnumMap<CardComponent, JComponent> componentMap = null;
+    private CardComponent visibleComponent = CardComponent.NONE;
     private JFrame frame = null;
     private CardLayout frameLayout = null;
     private TetrisComponent tetrisComponent = null;
     private StartScreenComponent startScreenComponent = null;
     // private HighscoreListComponent highscoreListComponent = null;
     private TetrisMenuBar tetrisMenuBar = null;
+    private AbstractAction restartAction = null;
 
-    public TetrisViewer(final String frameTitle, final Board tetrisBoard) {
+    public TetrisViewer(final String frameTitle, final Board tetrisBoard, final HighscoreList highscoreList) {
 	this.tetrisBoard = tetrisBoard;
 	this.frameTitle = frameTitle;
+	this.highscoreList = highscoreList;
     }
 
-    public enum FrameComponent
+    public enum CardComponent
     {
 	NONE, START_SCREEN, TETRIS_BOARD, HIGHSCORE_LIST
     }
@@ -31,12 +36,13 @@ public class TetrisViewer
     public void initWindow() {
 	frame = new JFrame(frameTitle);
 	frameLayout = new CardLayout();
-	tetrisComponent = new TetrisComponent(tetrisBoard);
+	tetrisComponent = new TetrisComponent(tetrisBoard, scoreCounter);
 	startScreenComponent = new StartScreenComponent();
 	//highscoreListComponent = new HighscoreListComponent();
 
-	TetrisAction tetrisAction = new TetrisAction(tetrisBoard, frame, frameTitle);
+	TetrisAction tetrisAction = new TetrisAction(tetrisBoard, frame, frameTitle, scoreCounter);
 	tetrisMenuBar = new TetrisMenuBar(tetrisAction);
+	restartAction = tetrisAction.createAction(GameAction.RESTART);
 
 	final KeyBinder keyBinder = new KeyBinder(frame, tetrisAction);
 	keyBinder.initKeyBindings();
@@ -46,15 +52,25 @@ public class TetrisViewer
 	initFrame();
     }
 
-    public void showWindow() {
+    public void showWindow() throws InterruptedException {
 	frame.setVisible(true);
-	showFrameComponent(FrameComponent.START_SCREEN);
+	showCardComponent(CardComponent.START_SCREEN);
 
 	final Action doOneStep = new AbstractAction()
 	{
 	    public void actionPerformed(ActionEvent e) {
-		showFrameComponent(FrameComponent.TETRIS_BOARD);
-		tetrisBoard.tick();
+		if (tetrisBoard.isGameOver()) {
+		    //showCardComponent(TetrisViewer.CardComponent.HIGHSCORE_LIST);
+		    String username = JOptionPane.showInputDialog("Enter your name to save your score");
+		    if (username != null) {
+			highscoreList.addHighscore(new Highscore(username, scoreCounter.getScore()));
+		    }
+
+		    restartAction.actionPerformed(null);
+		} else {
+		    showCardComponent(CardComponent.TETRIS_BOARD);
+		    tetrisBoard.tick();
+		}
 	    }
 	};
 
@@ -68,8 +84,8 @@ public class TetrisViewer
     }
 
     private void initFrame() {
-	addFrameComponent(FrameComponent.TETRIS_BOARD, BorderLayout.CENTER);
-	addFrameComponent(FrameComponent.START_SCREEN, BorderLayout.CENTER);
+	addCardComponent(CardComponent.TETRIS_BOARD, BorderLayout.CENTER);
+	addCardComponent(CardComponent.START_SCREEN, BorderLayout.CENTER);
 
 	frame.setLayout(frameLayout);
 
@@ -78,13 +94,13 @@ public class TetrisViewer
 	frame.pack();
     }
 
-    private void addFrameComponent(final FrameComponent component, final Object constraints) {
+    private void addCardComponent(final CardComponent component, final Object constraints) {
 	final JComponent viewComponent = componentMap.get(component);
 	frameLayout.addLayoutComponent(viewComponent, component.name());
 	frame.add(viewComponent, constraints);
     }
 
-    public void showFrameComponent(final FrameComponent component) {
+    public void showCardComponent(final CardComponent component) {
 	if (visibleComponent == component) {
 	    return;
 	}
@@ -100,9 +116,9 @@ public class TetrisViewer
      * @return void
      */
     private void createComponentMap() {
-	componentMap = new EnumMap<>(FrameComponent.class);
-	componentMap.put(FrameComponent.START_SCREEN, startScreenComponent);
-	componentMap.put(FrameComponent.TETRIS_BOARD, tetrisComponent);
-	// componentMap.put(FrameComponent.HIGHSCORE_LIST, highscoreListComponent);
+	componentMap = new EnumMap<>(CardComponent.class);
+	componentMap.put(CardComponent.START_SCREEN, startScreenComponent);
+	componentMap.put(CardComponent.TETRIS_BOARD, tetrisComponent);
+	// componentMap.put(CardComponent.HIGHSCORE_LIST, highscoreListComponent);
     }
 }

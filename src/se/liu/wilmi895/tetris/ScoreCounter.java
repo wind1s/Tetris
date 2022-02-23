@@ -8,6 +8,10 @@ public class ScoreCounter
     private final Map<Integer, Integer> scoreMap = createScoreMap();
     private int score = 0;
 
+    public void resetScore() {
+	score = 0;
+    }
+
     public int getScore() {
 	return score;
     }
