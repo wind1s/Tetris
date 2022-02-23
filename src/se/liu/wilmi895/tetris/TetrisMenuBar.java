@@ -2,24 +2,30 @@ package se.liu.wilmi895.tetris;
 
 import javax.swing.*;
 
-public class TetrisMenuBar extends JMenuBar
+public class TetrisMenuBar
 {
-    private final GameAction gameAction;
+    private final TetrisAction tetrisAction;
+    private JMenuBar menuBar = null;
 
-    public TetrisMenuBar(final GameAction gameAction) {
-	this.gameAction = gameAction;
+    public TetrisMenuBar(final TetrisAction tetrisAction) {
+	this.tetrisAction = tetrisAction;
     }
 
     public void initMenuBar() {
-	final JMenuItem quit = createMenuItem("quit", KeyAction.QUIT);
-	final JMenuItem togglePause = createMenuItem("pause", KeyAction.PAUSE);
-	add(togglePause);
-	add(quit);
+	menuBar = new JMenuBar();
+	final JMenuItem quit = createMenuItem("quit", GameAction.QUIT);
+	final JMenuItem togglePause = createMenuItem("pause", GameAction.PAUSE);
+	menuBar.add(togglePause);
+	menuBar.add(quit);
     }
 
-    private JMenuItem createMenuItem(final String text, final KeyAction action) {
+    public JMenuBar getMenuBar() {
+	return menuBar;
+    }
+
+    private JMenuItem createMenuItem(final String text, final GameAction action) {
 	final JMenuItem menuItem = new JMenuItem(text, 0);
-	menuItem.addActionListener(gameAction.createAction(action));
+	menuItem.addActionListener(tetrisAction.createAction(action));
 	return menuItem;
     }
 }

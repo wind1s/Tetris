@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
 import java.util.EnumMap;
 
 public class TetrisComponent extends JComponent implements BoardListener
@@ -49,6 +48,7 @@ public class TetrisComponent extends JComponent implements BoardListener
     {
 	final int xDrawPos = x * squareWidth;
 	final int yDrawPos = y * squareHeight;
+
 
 	g.setColor(squareColors.get(tetrisBoard.getVisibleSquare(x, y)));
 	g.fill3DRect(xDrawPos, yDrawPos, squareWidth, squareHeight, true);

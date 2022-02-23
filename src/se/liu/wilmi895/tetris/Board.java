@@ -246,7 +246,6 @@ public class Board
     }
 
 
-
     public void pauseGame(final boolean pauseState) {
 	isPaused = pauseState;
     }
