@@ -1,40 +1,25 @@
 package se.liu.wilmi895.tetris;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 
 public class TetrisMenuBar extends JMenuBar
 {
-    private JFrame frame;
-    private String frameTitle;
+    private final GameAction gameAction;
 
-    public TetrisMenuBar(final JFrame frame, final String frameTitle) {
-	this.frame = frame;
-	this.frameTitle = frameTitle;
+    public TetrisMenuBar(final GameAction gameAction) {
+	this.gameAction = gameAction;
     }
 
     public void initMenuBar() {
-	final JMenuItem quit = createMenuItem("quit", 0, new QuitAction());
+	final JMenuItem quit = createMenuItem("quit", KeyAction.QUIT);
+	final JMenuItem togglePause = createMenuItem("pause", KeyAction.PAUSE);
+	add(togglePause);
 	add(quit);
     }
 
-    private JMenuItem createMenuItem(final String text, final int mnemonic, final Action action) {
-	final JMenuItem menuItem = new JMenuItem(text, mnemonic);
-	menuItem.addActionListener(action);
+    private JMenuItem createMenuItem(final String text, final KeyAction action) {
+	final JMenuItem menuItem = new JMenuItem(text, 0);
+	menuItem.addActionListener(gameAction.createAction(action));
 	return menuItem;
-    }
-
-    private class QuitAction extends AbstractAction
-    {
-	@Override public void actionPerformed(final ActionEvent e) {
-	    final String[] quitOptions = { "Continue playing", "Quit" };
-	    int optionChosen =
-		    JOptionPane.showOptionDialog(frame, "Quit Tetris?", frameTitle, JOptionPane.YES_NO_CANCEL_OPTION,
-						 JOptionPane.QUESTION_MESSAGE, null, quitOptions, quitOptions[0]);
-
-	    if (optionChosen == 1) {
-		System.exit(0);
-	    }
-	}
     }
 }

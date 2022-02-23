@@ -5,18 +5,19 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.util.EnumMap;
 
 public class TetrisComponent extends JComponent implements BoardListener
 {
     private final static int SQUARE_PIXEL_SIZE = 50;
     private final EnumMap<SquareType, Color> squareColors = createColorMap();
-    private Board board;
-    private int boardWidth;
-    private int boardHeight;
+    private final Board tetrisBoard;
+    private final int boardWidth;
+    private final int boardHeight;
 
     public TetrisComponent(final Board board) {
-	this.board = board;
+	this.tetrisBoard = board;
 	this.boardWidth = board.getWidth();
 	this.boardHeight = board.getHeight();
     }
@@ -26,7 +27,7 @@ public class TetrisComponent extends JComponent implements BoardListener
     }
 
     @Override public Dimension getPreferredSize() {
-	return new Dimension(board.getWidth() * SQUARE_PIXEL_SIZE, board.getHeight() * SQUARE_PIXEL_SIZE);
+	return new Dimension(tetrisBoard.getWidth() * SQUARE_PIXEL_SIZE, tetrisBoard.getHeight() * SQUARE_PIXEL_SIZE);
     }
 
     @Override protected void paintComponent(final Graphics g) {
@@ -49,7 +50,7 @@ public class TetrisComponent extends JComponent implements BoardListener
 	final int xDrawPos = x * squareWidth;
 	final int yDrawPos = y * squareHeight;
 
-	g.setColor(squareColors.get(board.getVisibleSquare(x, y)));
+	g.setColor(squareColors.get(tetrisBoard.getVisibleSquare(x, y)));
 	g.fill3DRect(xDrawPos, yDrawPos, squareWidth, squareHeight, true);
 	g.setColor(Color.BLACK);
 	g.drawRect(xDrawPos, yDrawPos, squareWidth, squareHeight);

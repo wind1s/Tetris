@@ -1,16 +1,14 @@
 package se.liu.wilmi895.tetris;
 
-import javax.swing.JFrame;
-import javax.swing.Action;
-import javax.swing.AbstractAction;
-import javax.swing.Timer;
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 
 public class TetrisViewer
 {
-    private Board tetrisBoard;
-    private String frameTitle;
+    private final Board tetrisBoard;
+    private final String frameTitle;
+    private GameAction gameAction = null;
     private JFrame frame = null;
     private TetrisComponent tetrisComponent = null;
 
@@ -22,8 +20,11 @@ public class TetrisViewer
     public void init() {
 	frame = new JFrame(frameTitle);
 	tetrisComponent = new TetrisComponent(tetrisBoard);
-	final KeyBinder keyBinder = new KeyBinder(frame, tetrisBoard);
+	gameAction = new GameAction(tetrisBoard, frame, frameTitle);
+
+	final KeyBinder keyBinder = new KeyBinder(frame, gameAction);
 	keyBinder.initKeyBindings();
+
 	tetrisBoard.addBoardListener(tetrisComponent);
 	initFrame();
     }
@@ -48,7 +49,7 @@ public class TetrisViewer
     private void initFrame() {
 	frame.setLayout(new BorderLayout());
 	frame.add(tetrisComponent, BorderLayout.CENTER);
-	final TetrisMenuBar tetrisMenuBar = new TetrisMenuBar(frame, frameTitle);
+	final TetrisMenuBar tetrisMenuBar = new TetrisMenuBar(gameAction);
 	tetrisMenuBar.initMenuBar();
 	frame.setJMenuBar(tetrisMenuBar);
 	frame.pack();

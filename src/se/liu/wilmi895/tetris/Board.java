@@ -1,6 +1,8 @@
 package se.liu.wilmi895.tetris;
 
+import javax.swing.*;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,15 +14,16 @@ public class Board
     private final static int MARGIN = 2;
     private final static int DOUBLE_MARGIN = MARGIN * 2;
 
-    private List<BoardListener> boardListeners = new ArrayList<>();
-    private TetrominoMaker tetrominoMaker = new TetrominoMaker();
+    private final List<BoardListener> boardListeners = new ArrayList<>();
+    private final TetrominoMaker tetrominoMaker = new TetrominoMaker();
     private SquareType[][] squares;
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
     private Poly falling = null;
     private Point fallingPos = null;
     private int fallingSize = 0;
     private boolean gameOver = false;
+    private boolean isPaused = false;
 
     public Board(final int width, final int height) {
 	this.width = width;
@@ -95,7 +98,7 @@ public class Board
     }
 
     public void tick() {
-	if (gameOver) {
+	if (gameOver || isPaused) {
 	    return;
 	}
 
@@ -240,6 +243,12 @@ public class Board
 	} else {
 	    notifyListeners();
 	}
+    }
+
+
+
+    public void pauseGame(final boolean pauseState) {
+	isPaused = pauseState;
     }
 
     private boolean hasFallingTetromino() {
