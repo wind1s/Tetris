@@ -10,7 +10,11 @@ public class Highscore
         this.score = score;
     }
 
-    @Override public String toString() {
-        return String.format("%s %d", name, score);
+    public String getName() {
+        return name;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

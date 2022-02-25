@@ -9,10 +9,6 @@ public class TetrisTester
 	final Board board = new Board(10, 15);
 	final TetrisViewer tetrisViewer = new TetrisViewer("Tetris", board, highscoreList);
 	tetrisViewer.initWindow();
-	try {
-	    tetrisViewer.showWindow();
-	} catch (InterruptedException e) {
-	    e.printStackTrace();
-	}
+	tetrisViewer.showWindow();
     }
 }

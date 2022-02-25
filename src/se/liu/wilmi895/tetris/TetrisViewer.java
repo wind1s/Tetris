@@ -18,7 +18,7 @@ public class TetrisViewer
     private CardLayout frameLayout = null;
     private TetrisComponent tetrisComponent = null;
     private StartScreenComponent startScreenComponent = null;
-    // private HighscoreListComponent highscoreListComponent = null;
+    private HighscoreListComponent highscoreListComponent = null;
     private TetrisMenuBar tetrisMenuBar = null;
     private AbstractAction restartAction = null;
 
@@ -38,7 +38,7 @@ public class TetrisViewer
 	frameLayout = new CardLayout();
 	tetrisComponent = new TetrisComponent(tetrisBoard, scoreCounter);
 	startScreenComponent = new StartScreenComponent();
-	//highscoreListComponent = new HighscoreListComponent();
+	highscoreListComponent = new HighscoreListComponent(tetrisBoard, highscoreList);
 
 	TetrisAction tetrisAction = new TetrisAction(tetrisBoard, frame, frameTitle, scoreCounter);
 	tetrisMenuBar = new TetrisMenuBar(tetrisAction);
@@ -52,7 +52,7 @@ public class TetrisViewer
 	initFrame();
     }
 
-    public void showWindow() throws InterruptedException {
+    public void showWindow() {
 	frame.setVisible(true);
 	showCardComponent(CardComponent.START_SCREEN);
 
@@ -60,12 +60,11 @@ public class TetrisViewer
 	{
 	    public void actionPerformed(ActionEvent e) {
 		if (tetrisBoard.isGameOver()) {
-		    //showCardComponent(TetrisViewer.CardComponent.HIGHSCORE_LIST);
 		    String username = JOptionPane.showInputDialog("Enter your name to save your score");
 		    if (username != null) {
 			highscoreList.addHighscore(new Highscore(username, scoreCounter.getScore()));
 		    }
-
+		    showCardComponent(TetrisViewer.CardComponent.HIGHSCORE_LIST);
 		    restartAction.actionPerformed(null);
 		} else {
 		    showCardComponent(CardComponent.TETRIS_BOARD);
@@ -86,6 +85,7 @@ public class TetrisViewer
     private void initFrame() {
 	addCardComponent(CardComponent.TETRIS_BOARD, BorderLayout.CENTER);
 	addCardComponent(CardComponent.START_SCREEN, BorderLayout.CENTER);
+	addCardComponent(CardComponent.HIGHSCORE_LIST, BorderLayout.CENTER);
 
 	frame.setLayout(frameLayout);
 
@@ -119,6 +119,6 @@ public class TetrisViewer
 	componentMap = new EnumMap<>(CardComponent.class);
 	componentMap.put(CardComponent.START_SCREEN, startScreenComponent);
 	componentMap.put(CardComponent.TETRIS_BOARD, tetrisComponent);
-	// componentMap.put(CardComponent.HIGHSCORE_LIST, highscoreListComponent);
+	componentMap.put(CardComponent.HIGHSCORE_LIST, highscoreListComponent);
     }
 }

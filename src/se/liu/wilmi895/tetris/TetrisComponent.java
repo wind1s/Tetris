@@ -34,7 +34,7 @@ public class TetrisComponent extends JComponent implements BoardListener
 	final Graphics2D g2d = (Graphics2D) g;
 	final Dimension componentDimension = this.getSize();
 	final int squareHeight = componentDimension.height / boardHeight;
-	final int squareWidth = componentDimension.height / boardHeight;
+	final int squareWidth = componentDimension.width / boardWidth;
 
 	for (int y = 0; y < boardHeight; ++y) {
 	    for (int x = 0; x < boardWidth; ++x) {

@@ -13,10 +13,11 @@ public class HighscoreList
 
     public void addHighscore(final Highscore highscore) {
         highscoreList.add(highscore);
+        highscoreList.sort(new ScoreComparator());
     }
 
     public Highscore getHighscore(final int index) {
-        if(index < 0 || index > getSize()) {
+        if(index < 0 || index >= getSize()) {
             throw new IllegalArgumentException("HighscoreList index out of bounds.");
         }
         return highscoreList.get(index);
