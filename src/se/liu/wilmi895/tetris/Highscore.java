@@ -2,19 +2,22 @@ package se.liu.wilmi895.tetris;
 
 public class Highscore
 {
-    private final String name;
-    private final int score;
+    private String name = null;
+    private int score = 0;
 
     public Highscore(final String name, final int score) {
-        this.name = name;
-        this.score = score;
+	this.name = name;
+	this.score = score;
+    }
+
+    public Highscore() {
     }
 
     public String getName() {
-        return name;
+	return name;
     }
 
     public int getScore() {
-        return score;
+	return score;
     }
 }

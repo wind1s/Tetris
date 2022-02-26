@@ -6,7 +6,7 @@ import java.awt.*;
 public class HighscoreListComponent extends JComponent
 {
     private static final int SHOW_COUNT = 10;
-    private static final double FONT_SCALE = 0.5         ;
+    private static final double FONT_SCALE = 0.5;
     private final HighscoreList highscoreList;
     private final int boardWidth;
     private final int boardHeight;
@@ -34,13 +34,12 @@ public class HighscoreListComponent extends JComponent
 
 	final int xDrawStart = squareWidth;
 	final int yDrawStart = squareHeight;
-	g2d.setFont(new Font("Monospaced", Font.PLAIN, (int)(squareHeight * FONT_SCALE)));
+	g2d.setFont(new Font("Monospaced", Font.PLAIN, (int) (squareHeight * FONT_SCALE)));
 	g2d.drawString("Highscores", xDrawStart, yDrawStart);
-	g2d.drawString("", xDrawStart, yDrawStart + yDrawStart / 2);
 
 	for (int i = 0; i < showCount; i++) {
 	    final Highscore highscore = highscoreList.getHighscore(i);
-	    g2d.drawString(String.format("(%d) %s - %d", i, highscore.getName(), highscore.getScore()), xDrawStart,
+	    g2d.drawString(String.format("(%d) %s - %d", i + 1, highscore.getName(), highscore.getScore()), xDrawStart,
 			   yDrawStart * (i + 2));
 	}
     }
