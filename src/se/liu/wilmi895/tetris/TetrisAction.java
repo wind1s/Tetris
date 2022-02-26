@@ -54,15 +54,15 @@ public class TetrisAction
 
     private class RestartAction extends AbstractAction
     {
-
 	@Override public void actionPerformed(final ActionEvent e) {
 	    final boolean restart = showYesNoDialog("Restart game?", JOptionPane.QUESTION_MESSAGE);
 
-	    if (restart) {
-		scoreCounter.resetScore();
-		tetrisBoard.restartGame();
+	    if (!restart) {
+		quitAction.actionPerformed(null);
 	    }
-	    quitAction.actionPerformed(null);
+	    scoreCounter.resetScore();
+	    tetrisViewer.resetTickDelay();
+	    tetrisBoard.restartGame();
 	}
     }
 

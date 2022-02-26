@@ -9,12 +9,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HighscoreList
 {
-    private static final String SAVE_FILE_PATH = System.getProperty("user.dir") + "/resources/highscores.json";
+    public static final String FILE_NAME = "highscores.json";
+    private static final String SAVE_FILE_PATH = System.getProperty("user.dir") + "/resources/" + FILE_NAME;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private List<Highscore> highscoreList = null;
 
@@ -41,10 +46,16 @@ public class HighscoreList
 	return highscoreList.size();
     }
 
-    public void saveToJson() throws FileNotFoundException, SecurityException {
-	try (final PrintWriter writer = new PrintWriter(SAVE_FILE_PATH)) {
+    public void saveToJson() throws IOException, SecurityException, FileNotFoundException {
+	final String tempFile = SAVE_FILE_PATH + ".tmp";
+	try (final PrintWriter writer = new PrintWriter(tempFile)) {
 	    writer.write(GSON.toJson(this));
 	}
+
+	final Path targetFile = Paths.get(SAVE_FILE_PATH);
+	Files.deleteIfExists(targetFile);
+	Files.move(Paths.get(tempFile), targetFile,
+		   StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static HighscoreList readSavedJson() throws IOException, JsonSyntaxException, JsonIOException {

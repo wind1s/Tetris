@@ -14,13 +14,15 @@ import java.util.SortedMap;
 
 public class TetrisViewer
 {
+    private static final int NORMAL_TICK_SPEED_MS = 1000;
+    private static final String FRAME_TITLE = "Tetris";
     private final Board tetrisBoard;
-    private final String frameTitle;
     private final ScoreCounter scoreCounter = new ScoreCounter();
-    private EnumMap<CardComponent, JComponent> componentMap = null;
+    private final CardLayout frameLayout = new CardLayout();
     private CardComponent visibleComponent = CardComponent.NONE;
+    private Timer clockTimer = null;
+    private EnumMap<CardComponent, JComponent> componentMap = null;
     private JFrame frame = null;
-    private CardLayout frameLayout = null;
     private TetrisComponent tetrisComponent = null;
     private StartScreenComponent startScreenComponent = null;
     private HighscoreListComponent highscoreListComponent = null;
@@ -29,9 +31,8 @@ public class TetrisViewer
     private AbstractAction restartAction = null;
     private AbstractAction quitAction = null;
 
-    public TetrisViewer(final String frameTitle, final Board tetrisBoard) {
+    public TetrisViewer(final Board tetrisBoard) {
 	this.tetrisBoard = tetrisBoard;
-	this.frameTitle = frameTitle;
     }
 
     public enum CardComponent
@@ -51,24 +52,21 @@ public class TetrisViewer
     }
 
     public void initWindow() {
-	frame = new JFrame(frameTitle);
-	frameLayout = new CardLayout();
+	tryLoadHighscoreList();
 
 	TetrisAction tetrisAction = new TetrisAction(this, tetrisBoard, scoreCounter);
 	restartAction = tetrisAction.createAction(GameAction.RESTART);
 	quitAction = tetrisAction.createAction(GameAction.QUIT);
 
-	tryLoadHighscoreList();
 	tetrisComponent = new TetrisComponent(tetrisBoard, scoreCounter);
 	startScreenComponent = new StartScreenComponent();
 	highscoreListComponent = new HighscoreListComponent(tetrisBoard, highscoreList);
 	tetrisMenuBar = new TetrisMenuBar(tetrisAction);
+	tetrisBoard.addBoardListener(tetrisComponent);
 
+	frame = new JFrame(FRAME_TITLE);
 	final KeyBinder keyBinder = new KeyBinder(frame, tetrisAction);
 	keyBinder.initKeyBindings();
-
-	tetrisBoard.addBoardListener(tetrisComponent);
-	createComponentMap();
 	initFrame();
     }
 
@@ -76,40 +74,7 @@ public class TetrisViewer
 	frame.setVisible(true);
 	showCardComponent(CardComponent.START_SCREEN);
 
-	final Action doOneStep = new AbstractAction()
-	{
-	    public void actionPerformed(ActionEvent e) {
-		if (tetrisBoard.isGameOver()) {
-		    trySaveHighscoreList();
-		    showCardComponent(CardComponent.HIGHSCORE_LIST);
-		    restartAction.actionPerformed(null);
-		} else {
-		    showCardComponent(CardComponent.TETRIS_BOARD);
-		    tetrisBoard.tick();
-		}
-	    }
-	};
-	final Timer clockTimer = new Timer(1000, doOneStep);
-
-	final Action speedUp = new AbstractAction()
-	{
-	    private static final int TICK_SPEED_UP_INTERVAL_MS = 5000;
-	    private static final int TICK_SPEED_UP_MS = 100;
-	    private static final int TICK_MIN_DELAY_MS = 100;
-	    private int tickCount = 0;
-
-	    @Override public void actionPerformed(final ActionEvent e) {
-		final int tickDelay = clockTimer.getDelay();
-		++tickCount;
-
-		if((tickDelay * tickCount) >= TICK_SPEED_UP_INTERVAL_MS) {
-			clockTimer.setDelay(Math.max(TICK_MIN_DELAY_MS, tickDelay - TICK_SPEED_UP_MS)) ;
-			tickCount = 0;
-		}
-	    }
-	};
-
-	clockTimer.addActionListener(speedUp);
+	clockTimer = new Timer(NORMAL_TICK_SPEED_MS, new TickAction());
 	clockTimer.setInitialDelay(StartScreenComponent.SHOW_TIME_MS);
 	clockTimer.setCoalesce(true);
 	clockTimer.start();
@@ -118,7 +83,39 @@ public class TetrisViewer
 	// clockTimer.addActionListener();
     }
 
+    private class TickAction extends AbstractAction
+    {
+	private static final int TICK_SPEED_UP_INTERVAL_MS = 1000;
+	private static final int TICK_SPEED_UP_MS = 100;
+	private static final int MIN_TICK_DELAY_MS = 100;
+	private int tickCount = 0;
+
+	@Override public void actionPerformed(ActionEvent e) {
+	    if (tetrisBoard.isGameOver()) {
+		trySaveHighscoreList();
+		showCardComponent(CardComponent.HIGHSCORE_LIST);
+		restartAction.actionPerformed(null);
+	    } else {
+		showCardComponent(CardComponent.TETRIS_BOARD);
+		tetrisBoard.tick();
+	    }
+
+	    final int tickDelay = clockTimer.getDelay();
+	    ++tickCount;
+
+	    if((tickDelay * tickCount) >= TICK_SPEED_UP_INTERVAL_MS) {
+		clockTimer.setDelay(Math.max(MIN_TICK_DELAY_MS, tickDelay - TICK_SPEED_UP_MS)) ;
+		tickCount = 0;
+	    }
+	}
+    };
+
+    public void resetTickDelay() {
+	clockTimer.setDelay(NORMAL_TICK_SPEED_MS);
+    }
+
     private void initFrame() {
+	createComponentMap();
 	addCardComponent(CardComponent.TETRIS_BOARD, BorderLayout.CENTER);
 	addCardComponent(CardComponent.START_SCREEN, BorderLayout.CENTER);
 	addCardComponent(CardComponent.HIGHSCORE_LIST, BorderLayout.CENTER);
@@ -137,13 +134,13 @@ public class TetrisViewer
 	    try {
 		highscoreList = HighscoreList.readSavedJson();
 	    } catch (IOException | JsonIOException ignored) {
-		dialogMessage = "Could not read highscore list file.\nTry again?";
+		dialogMessage = "Could not read %s\n%s";
 	    } catch (JsonSyntaxException ignored) {
-		dialogMessage = "Highscore file is corrupt.\nTry again?";
+		dialogMessage = "Highscore file %s is corrupt\n%s";
 	    }
 
 	    if (dialogMessage != null) {
-		showYesNoErrorDialog(dialogMessage);
+		showYesNoErrorDialog(String.format(dialogMessage, HighscoreList.FILE_NAME, "Try again?"));
 	    } else {
 		break;
 	    }
@@ -164,13 +161,15 @@ public class TetrisViewer
 	    try {
 		highscoreList.saveToJson();
 	    } catch (FileNotFoundException ignored) {
-		dialogMessage = "Could not save highscore list.\nTry again?";
+		dialogMessage = "Could not save %s\n%s";
 	    } catch (SecurityException ignored) {
-		dialogMessage = "Access denied to highscore list file.\nTry again?";
+		dialogMessage = "Access denied to %s\n%s";
+	    } catch (IOException ignored) {
+		dialogMessage = "Unknown I/O error occurred with %s\n%s";
 	    }
 
 	    if (dialogMessage != null) {
-		showYesNoErrorDialog(dialogMessage);
+		showYesNoErrorDialog(String.format(dialogMessage, HighscoreList.FILE_NAME, "Try again?"));
 	    } else {
 		break;
 	    }
@@ -204,7 +203,7 @@ public class TetrisViewer
     public int showOptionDialog(final String message, final int messageType, final int optionType,
 				final Map<Integer, String> optionMap, final Icon icon)
     {
-	return JOptionPane.showOptionDialog(frame, message, frameTitle, optionType, messageType, icon,
+	return JOptionPane.showOptionDialog(frame, message, FRAME_TITLE, optionType, messageType, icon,
 					    optionMap.values().toArray(), null);
     }
 
