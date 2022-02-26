@@ -7,6 +7,7 @@ public class HighscoreListComponent extends JComponent
 {
     private static final int SHOW_COUNT = 10;
     private static final double FONT_SCALE = 0.5;
+    private static final int DRAW_ROW_OFFSET = 2;
     private final HighscoreList highscoreList;
     private final int boardWidth;
     private final int boardHeight;
@@ -40,7 +41,7 @@ public class HighscoreListComponent extends JComponent
 	for (int i = 0; i < showCount; i++) {
 	    final Highscore highscore = highscoreList.getHighscore(i);
 	    g2d.drawString(String.format("(%d) %s - %d", i + 1, highscore.getName(), highscore.getScore()), xDrawStart,
-			   yDrawStart * (i + 2));
+			   yDrawStart * (i + DRAW_ROW_OFFSET));
 	}
     }
 }

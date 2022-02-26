@@ -16,7 +16,6 @@ public class TetrisViewer
 {
     private final Board tetrisBoard;
     private final String frameTitle;
-
     private final ScoreCounter scoreCounter = new ScoreCounter();
     private EnumMap<CardComponent, JComponent> componentMap = null;
     private CardComponent visibleComponent = CardComponent.NONE;
@@ -43,8 +42,6 @@ public class TetrisViewer
     /**
      * Creates the frame component mapping. Needs to be called after all components are allocated, otherwise the mapping
      * contains null components.
-     *
-     * @return void
      */
     private void createComponentMap() {
 	componentMap = new EnumMap<>(CardComponent.class);

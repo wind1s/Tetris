@@ -22,11 +22,11 @@ public class ScoreCounter
 
     private static Map<Integer, Integer> createScoreMap() {
 	final Map<Integer, Integer> scoreMap = new HashMap<>();
-	final int[] scoreForIRows = { 100, 300, 500, 800 };
+	scoreMap.put(1, 100);
+	scoreMap.put(2, 300);
+	scoreMap.put(3, 500);
+	scoreMap.put(4, 800);
 
-	for (int i = 0; i < scoreForIRows.length; i++) {
-	    scoreMap.put(i + 1, scoreForIRows[i]);
-	}
 	return scoreMap;
     }
 }
