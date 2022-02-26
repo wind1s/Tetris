@@ -89,8 +89,27 @@ public class TetrisViewer
 		}
 	    }
 	};
+	final Timer clockTimer = new Timer(1000, doOneStep);
 
-	final Timer clockTimer = new Timer(750, doOneStep);
+	final Action speedUp = new AbstractAction()
+	{
+	    private static final int TICK_SPEED_UP_INTERVAL_MS = 5000;
+	    private static final int TICK_SPEED_UP_MS = 100;
+	    private static final int TICK_MIN_DELAY_MS = 100;
+	    private int tickCount = 0;
+
+	    @Override public void actionPerformed(final ActionEvent e) {
+		final int tickDelay = clockTimer.getDelay();
+		++tickCount;
+
+		if((tickDelay * tickCount) >= TICK_SPEED_UP_INTERVAL_MS) {
+			clockTimer.setDelay(Math.max(TICK_MIN_DELAY_MS, tickDelay - TICK_SPEED_UP_MS)) ;
+			tickCount = 0;
+		}
+	    }
+	};
+
+	clockTimer.addActionListener(speedUp);
 	clockTimer.setInitialDelay(StartScreenComponent.SHOW_TIME_MS);
 	clockTimer.setCoalesce(true);
 	clockTimer.start();
