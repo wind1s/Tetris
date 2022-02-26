@@ -19,8 +19,6 @@ public class TetrisMenuBar
 	menuBar.add(pause);
 	menuBar.add(restart);
 	menuBar.add(quit);
-	menuBar.add(Box.createHorizontalGlue());
-	menuBar.add(Box.createHorizontalGlue());
     }
 
     public JMenuBar getMenuBar() {

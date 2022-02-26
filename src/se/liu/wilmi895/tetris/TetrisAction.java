@@ -56,15 +56,13 @@ public class TetrisAction
     {
 
 	@Override public void actionPerformed(final ActionEvent e) {
-	    int optionChosen = tetrisViewer.showOptionDialog("Restart game?", JOptionPane.QUESTION_MESSAGE,
-							     JOptionPane.DEFAULT_OPTION, YES_NO_OPTION_MAP, null);
+	    final boolean restart = showYesNoDialog("Restart game?", JOptionPane.QUESTION_MESSAGE);
 
-	    switch (TetrisViewer.getOptionString(optionChosen, YES_NO_OPTION_MAP)) {
-		case "No" -> quitAction.actionPerformed(null);
+	    if (restart) {
+		scoreCounter.resetScore();
+		tetrisBoard.restartGame();
 	    }
-
-	    scoreCounter.resetScore();
-	    tetrisBoard.restartGame();
+	    quitAction.actionPerformed(null);
 	}
     }
 
@@ -106,13 +104,13 @@ public class TetrisAction
     {
 	@Override public void actionPerformed(final ActionEvent e) {
 	    tetrisBoard.pauseGame(true);
-	    int optionChosen = tetrisViewer.showOptionDialog("Quit game?", JOptionPane.QUESTION_MESSAGE,
-							     JOptionPane.DEFAULT_OPTION, YES_NO_OPTION_MAP, null);
 
-	    switch (TetrisViewer.getOptionString(optionChosen, YES_NO_OPTION_MAP)) {
-		case "Yes" -> System.exit(0);
-		default -> tetrisBoard.pauseGame(false);
+	    final boolean quit = showYesNoDialog("Quit game?", JOptionPane.QUESTION_MESSAGE);
+
+	    if (quit) {
+		System.exit(0);
 	    }
+	    tetrisBoard.pauseGame(false);
 	}
     }
 
@@ -129,10 +127,24 @@ public class TetrisAction
 	    switch (TetrisViewer.getOptionString(optionChosen, pauseOptionMap)) {
 		case "Restart" -> restartAction.actionPerformed(null);
 		case "Quit" -> quitAction.actionPerformed(null);
-		default -> tetrisBoard.pauseGame(false);
 	    }
+	    tetrisBoard.pauseGame(false);
 	}
 
+    }
+
+    private boolean showYesNoDialog(final String dialogMessage, final int messageType) {
+	int optionChosen =
+		tetrisViewer.showOptionDialog(dialogMessage, messageType, JOptionPane.DEFAULT_OPTION, YES_NO_OPTION_MAP,
+					      null);
+
+	switch (TetrisViewer.getOptionString(optionChosen, YES_NO_OPTION_MAP)) {
+	    case "Yes":
+		return true;
+	    case "No":
+	    default:
+		return false;
+	}
     }
 
     private static SortedMap<Integer, String> createOptionMap(final String[] options) {
@@ -143,6 +155,4 @@ public class TetrisAction
 	}
 	return optionMap;
     }
-
-
 }
