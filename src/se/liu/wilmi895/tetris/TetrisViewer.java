@@ -78,9 +78,6 @@ public class TetrisViewer
 	clockTimer.setInitialDelay(StartScreenComponent.SHOW_TIME_MS);
 	clockTimer.setCoalesce(true);
 	clockTimer.start();
-
-	// Tetris 5.7: Add an action listener to timer which notifies board about the timer to speed up tetris.
-	// clockTimer.addActionListener();
     }
 
     private class TickAction extends AbstractAction
@@ -148,9 +145,9 @@ public class TetrisViewer
     }
 
     private void trySaveHighscoreList() {
-	String username = JOptionPane.showInputDialog("Enter your name to save your score");
+	String username = JOptionPane.showInputDialog("Enter your name to save your score\n(empty and blank names are not saved)");
 
-	if (username == null) {
+	if (username.isEmpty() || username.isBlank()) {
 	    return;
 	}
 	highscoreList.addHighscore(new Highscore(username, scoreCounter.getScore()));

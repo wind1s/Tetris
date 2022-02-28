@@ -15,11 +15,12 @@ public class Board
 
     private final List<BoardListener> boardListeners = new ArrayList<>();
     private final TetrominoMaker tetrominoMaker = new TetrominoMaker();
+    private FallHandler fallHandler = new DefaultFallHandler();
     private SquareType[][] squares = null;
-    private final int width;
-    private final int height;
     private Poly falling = null;
     private Point fallingPos = null;
+    private final int width;
+    private final int height;
     private int fallingSize = 0;
     private int rowsLastRemoved = 0;
     private boolean gameOver = false;
@@ -32,21 +33,11 @@ public class Board
     }
 
     private void initDefaultBoard() {
-	squares = new SquareType[height + DOUBLE_MARGIN][width + DOUBLE_MARGIN];
+	squares = new SquareType[height][width];
 
-	for (int y = 0; y < height + DOUBLE_MARGIN; ++y) {
-	    if (y < MARGIN || y >= height + MARGIN) {
-		Arrays.fill(squares[y], SquareType.OUTSIDE);
-	    } else {
-		fillVisibleRowDefault(squares[y]);
-	    }
+	for (int y = 0; y < height; ++y) {
+	    Arrays.fill(squares[y], 0, width, SquareType.EMPTY);
 	}
-    }
-
-    private void fillVisibleRowDefault(SquareType[] row) {
-	Arrays.fill(row, 0, MARGIN, SquareType.OUTSIDE);
-	Arrays.fill(row, MARGIN, width + MARGIN, SquareType.EMPTY);
-	Arrays.fill(row, width + MARGIN, width + DOUBLE_MARGIN, SquareType.OUTSIDE);
     }
 
     public int getWidth() {
@@ -87,13 +78,13 @@ public class Board
 	    throw new IllegalArgumentException(String.format("%d (x) and %d (y) is out of bounds", x, y));
 	}
 	// Return the SquareType inside the board.
-	return squares[y + MARGIN][x + MARGIN];
+	return squares[y][x];
     }
 
     public SquareType getVisibleSquare(final int x, final int y) {
 	if (hasFallingTetromino()) {
-	    final int xDiff = x - fallingPos.x + MARGIN;
-	    final int yDiff = y - fallingPos.y + MARGIN;
+	    final int xDiff = x - fallingPos.x;
+	    final int yDiff = y - fallingPos.y;
 
 	    // If the difference is within the falling tetrominos size, then display it's SquareType.
 	    if (xDiff >= 0 && xDiff < fallingSize && yDiff >= 0 && yDiff < fallingSize) {
@@ -106,6 +97,18 @@ public class Board
 	}
 
 	return getSquare(x, y);
+    }
+
+    public SquareType getFallingSquare(final int x, final int y) {
+	return falling.getSquare(x,y);
+    }
+
+    public Point getFallingPos() {
+	return fallingPos;
+    }
+
+    public int getFallingSize() {
+	return fallingSize;
     }
 
     public void addBoardListener(BoardListener bl) {
@@ -133,7 +136,7 @@ public class Board
 	} else {
 	    setFalling(RND.nextInt(0, tetrominoMaker.getNumberOfTypes()));
 	    // If a newly spawned tetromino collides immediately, its game over.
-	    gameOver = hasCollision();
+	    gameOver = fallHandler.hasCollision(this);
 	}
 
 	notifyListeners();
@@ -163,13 +166,13 @@ public class Board
 	return true;
     }
 
-    private void moveRowsDown(final int rowToRemove) {
-	for (int row = rowToRemove + MARGIN; row >= 1 + MARGIN; --row) {
+    public void moveRowsDown(final int rowToRemove) {
+	for (int row = rowToRemove; row >= 1; --row) {
 	    // Get the SquareType above the current column to effectivly move a row down.
 	    squares[row] = squares[row - 1];
 	}
-	squares[MARGIN] = new SquareType[width + DOUBLE_MARGIN];
-	fillVisibleRowDefault(squares[MARGIN]);
+	squares[0] = new SquareType[width];
+	Arrays.fill(squares[0], 0, width, SquareType.EMPTY);
     }
 
     private void placeFallingOnBoard() {
@@ -195,24 +198,7 @@ public class Board
 	falling = tetrominoMaker.getPoly(n);
 	fallingSize = falling.getSize();
 	// Set the position to top middle of the screen.
-	fallingPos = new Point((width + DOUBLE_MARGIN - fallingSize) / 2, MARGIN);
-    }
-
-    private boolean hasCollision() {
-	for (int x = 0; x < fallingSize; ++x) {
-	    for (int y = 0; y < fallingSize; ++y) {
-		if (hasFallingCollision(x, y)) {
-		    return true;
-		}
-	    }
-	}
-
-	return false;
-    }
-
-    private boolean hasFallingCollision(final int x, final int y) {
-	return falling.getSquare(x, y) != SquareType.EMPTY &&
-	       squares[fallingPos.y + y][fallingPos.x + x] != SquareType.EMPTY;
+	fallingPos = new Point((width - fallingSize) / 2, 0);
     }
 
     public boolean move(Direction direction) {
@@ -230,7 +216,7 @@ public class Board
 	}
 	translateFalling(dx, dy);
 	// If a collision occurs move the tetromino back. No need to notify listeners in this case.
-	final boolean hasCollided = hasCollision();
+	final boolean hasCollided = fallHandler.hasCollision(this);
 	if (hasCollided) {
 	    translateFalling(-dx, -dy);
 	} else {
@@ -255,7 +241,7 @@ public class Board
 	final Poly oldFalling = falling;
 	falling = rotatedFalling;
 
-	if (hasCollision()) {
+	if (fallHandler.hasCollision(this)) {
 	    falling = oldFalling;
 	} else {
 	    notifyListeners();
@@ -271,7 +257,7 @@ public class Board
 	return falling != null && fallingPos != null;
     }
 
-    private boolean isOutsideBoard(final int x, final int y) {
+    public boolean isOutsideBoard(final int x, final int y) {
 	return x < 0 || x >= width || y < 0 || y >= height;
     }
 

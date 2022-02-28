@@ -19,6 +19,10 @@ public enum SquareType
 	return SquareType.values()[n];
     }
 
+    public static boolean isEmpty(final SquareType square) {
+	return square == SquareType.EMPTY;
+    }
+
     public static void main(String[] args) {
 	final Random rnd = new Random();
 
