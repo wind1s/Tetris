@@ -15,20 +15,21 @@ public class Board
 
     private final List<BoardListener> boardListeners = new ArrayList<>();
     private final TetrominoMaker tetrominoMaker = new TetrominoMaker();
-    private FallHandler fallHandler = new DefaultFallHandler();
     private SquareType[][] squares = null;
     private Poly falling = null;
     private Point fallingPos = null;
-    private final int width;
-    private final int height;
     private int fallingSize = 0;
     private int rowsLastRemoved = 0;
     private boolean gameOver = false;
     private boolean isPaused = false;
+    private FallHandler fallHandler;
+    private final int height;
+    private final int width;
 
     public Board(final int width, final int height) {
 	this.width = width;
 	this.height = height;
+	this.fallHandler = new DefaultFallHandler(this);
 	initDefaultBoard();
     }
 
@@ -136,7 +137,7 @@ public class Board
 	} else {
 	    setFalling(RND.nextInt(0, tetrominoMaker.getNumberOfTypes()));
 	    // If a newly spawned tetromino collides immediately, its game over.
-	    gameOver = fallHandler.hasCollision(this);
+	    gameOver = fallHandler.hasCollision();
 	}
 
 	notifyListeners();
@@ -201,6 +202,14 @@ public class Board
 	fallingPos = new Point((width - fallingSize) / 2, 0);
     }
 
+    public void setFallHandler(final FallHandler fallHandler) {
+	this.fallHandler = fallHandler;
+    }
+
+    public boolean powerUpActive() {
+	return !fallHandler.getClass().equals(DefaultFallHandler.class);
+    }
+
     public boolean move(Direction direction) {
 	if (!hasFallingTetromino()) {
 	    return false;
@@ -216,7 +225,7 @@ public class Board
 	}
 	translateFalling(dx, dy);
 	// If a collision occurs move the tetromino back. No need to notify listeners in this case.
-	final boolean hasCollided = fallHandler.hasCollision(this);
+	final boolean hasCollided = fallHandler.hasCollision();
 	if (hasCollided) {
 	    translateFalling(-dx, -dy);
 	} else {
@@ -241,7 +250,7 @@ public class Board
 	final Poly oldFalling = falling;
 	falling = rotatedFalling;
 
-	if (fallHandler.hasCollision(this)) {
+	if (fallHandler.hasCollision()) {
 	    falling = oldFalling;
 	} else {
 	    notifyListeners();

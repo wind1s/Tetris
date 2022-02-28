@@ -2,8 +2,15 @@ package se.liu.wilmi895.tetris;
 
 public class HeavyFall extends FallHandler
 {
-    @Override protected boolean isFallingCollision(final int x, final int y, final Board tetrisBoard) {
+    public HeavyFall(final Board tetrisBoard) {
+	super(tetrisBoard);
+    }
 
-	return isFallingOutsideBoard(x,y,tetrisBoard);
+    @Override protected boolean isFallingCollision(final int x, final int y) {
+	if(isFallingOutsideBoard(x,y)) {
+	    return true;
+	}
+
+	return false;
     }
 }

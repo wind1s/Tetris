@@ -24,7 +24,7 @@ public class TetrisAction
     public AbstractAction createAction(final GameAction gameAction, final Object... params) {
 	// Check the number of arguments supplied.
 	switch (gameAction) {
-	    case MOVE, ROTATE -> checkCreateActionParams(1, params, gameAction);
+	    case MOVE, ROTATE, POWERUP -> checkCreateActionParams(1, params, gameAction);
 	}
 
 	switch (gameAction) {
@@ -32,6 +32,8 @@ public class TetrisAction
 		return new MoveAction((Direction) params[0]);
 	    case ROTATE:
 		return new RotateAction((Direction) params[0]);
+	    case POWERUP:
+		return new PowerUpAction((FallHandler) params[0]);
 	    case QUIT:
 		return new QuitAction();
 	    case PAUSE:
@@ -49,6 +51,23 @@ public class TetrisAction
 	    throw new IllegalArgumentException(
 		    String.format("%d missing arguments for game action %s", params.length - numRequiredArgs,
 				  gameAction.name()));
+	}
+    }
+
+    private class PowerUpAction extends AbstractAction
+    {
+	private final FallHandler fallHandler;
+
+	private PowerUpAction(final FallHandler fallHandler) {
+	    this.fallHandler = fallHandler;
+	}
+
+	@Override public void actionPerformed(final ActionEvent e) {
+	    if(tetrisBoard.powerUpActive()) {
+		tetrisBoard.setFallHandler(new DefaultFallHandler(tetrisBoard));
+	    } else {
+	    	tetrisBoard.setFallHandler(fallHandler);
+	    }
 	}
     }
 

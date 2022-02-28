@@ -65,8 +65,8 @@ public class TetrisViewer
 	tetrisBoard.addBoardListener(tetrisComponent);
 
 	frame = new JFrame(FRAME_TITLE);
-	final KeyBinder keyBinder = new KeyBinder(frame, tetrisAction);
-	keyBinder.initKeyBindings();
+	final KeyBinder keyBinder = new KeyBinder(frame.getRootPane());
+	keyBinder.initKeyBindings(tetrisAction, tetrisBoard);
 	initFrame();
     }
 
