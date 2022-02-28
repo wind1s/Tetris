@@ -6,31 +6,19 @@ public abstract class FallHandler
 {
     protected final Board tetrisBoard;
     protected final Point fallingPos;
+    protected final int fallingSize;
 
     protected FallHandler(final Board tetrisBoard) {
 	this.tetrisBoard = tetrisBoard;
 	this.fallingPos = tetrisBoard.getFallingPos();
+	this.fallingSize = tetrisBoard.getFallingSize();
     }
 
-    public final boolean hasCollision() {
-	final int fallingSize = tetrisBoard.getFallingSize();
-
-	for (int x = 0; x < fallingSize; ++x) {
-	    for (int y = 0; y < fallingSize; ++y) {
-		if (isFallingCollision(x, y)) {
-		    return true;
-		}
-	    }
-	}
-
-	return false;
-    }
+    public abstract boolean hasCollision();
 
     protected final boolean isFallingOutsideBoard(final int x, final int y) {
 	final int xBoard = fallingPos.x + x;
 	final int yBoard = fallingPos.y + y;
 	return tetrisBoard.isOutsideBoard(xBoard, yBoard) && !SquareType.isEmpty(tetrisBoard.getFallingSquare(x, y));
     }
-
-    protected abstract boolean isFallingCollision(final int x, final int y);
 }

@@ -1,17 +1,19 @@
 package se.liu.wilmi895.tetris;
 
-public class Fallthrough extends FallHandler
+public class FallHeavy extends FallHandler
 {
-    public Fallthrough(final Board tetrisBoard) {
+    public FallHeavy(final Board tetrisBoard) {
 	super(tetrisBoard);
     }
 
     @Override public final boolean hasCollision() {
 	for (int y = 0; y < fallingSize; ++y) {
 	    for (int x = 0; x < fallingSize; ++x) {
-		if (isFallingOutsideBoard(x, y)) {
+		if (isFallingOutsideBoard(x,y)) {
 		    return true;
 		}
+
+
 	    }
 	}
 	return false;
