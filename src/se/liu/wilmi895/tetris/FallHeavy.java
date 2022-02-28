@@ -1,5 +1,7 @@
 package se.liu.wilmi895.tetris;
 
+import java.awt.*;
+
 public class FallHeavy extends FallHandler
 {
     public FallHeavy(final Board tetrisBoard) {
@@ -7,6 +9,9 @@ public class FallHeavy extends FallHandler
     }
 
     @Override public final boolean hasCollision() {
+	final Point fallingPos = tetrisBoard.getFallingPos();
+	final int fallingSize = tetrisBoard.getFallingSize();
+
 	for (int y = 0; y < fallingSize; ++y) {
 	    for (int x = 0; x < fallingSize; ++x) {
 		if (isFallingOutsideBoard(x,y)) {

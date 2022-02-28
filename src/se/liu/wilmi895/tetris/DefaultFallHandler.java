@@ -9,6 +9,9 @@ public class DefaultFallHandler extends FallHandler
     }
 
     @Override public final boolean hasCollision() {
+	final int fallingSize = tetrisBoard.getFallingSize();
+	final Point fallingPos = tetrisBoard.getFallingPos();
+
 	for (int y = 0; y < fallingSize; ++y) {
 	    for (int x = 0; x < fallingSize; ++x) {
 		final int xBoard = fallingPos.x + x;
