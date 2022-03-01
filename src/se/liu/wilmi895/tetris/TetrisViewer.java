@@ -17,7 +17,7 @@ public class TetrisViewer
     private static final int NORMAL_TICK_SPEED_MS = 1000;
     private static final String FRAME_TITLE = "Tetris";
     private final Board tetrisBoard;
-    private final ScoreCounter scoreCounter = new ScoreCounter();
+    private final ScoreCounter scoreCounter;
     private final CardLayout frameLayout = new CardLayout();
     private CardComponent visibleComponent = CardComponent.NONE;
     private Timer clockTimer = null;
@@ -31,8 +31,9 @@ public class TetrisViewer
     private AbstractAction restartAction = null;
     private AbstractAction quitAction = null;
 
-    public TetrisViewer(final Board tetrisBoard) {
+    public TetrisViewer(final Board tetrisBoard, final ScoreCounter scoreCounter) {
 	this.tetrisBoard = tetrisBoard;
+	this.scoreCounter = scoreCounter;
     }
 
     public enum CardComponent
@@ -82,7 +83,7 @@ public class TetrisViewer
 
     private class TickAction extends AbstractAction
     {
-	private static final int TICK_SPEED_UP_INTERVAL_MS = 1000;
+	private static final int TICK_SPEED_UP_INTERVAL_MS = 10000;
 	private static final int TICK_SPEED_UP_MS = 100;
 	private static final int MIN_TICK_DELAY_MS = 100;
 	private int tickCount = 0;
@@ -100,12 +101,12 @@ public class TetrisViewer
 	    final int tickDelay = clockTimer.getDelay();
 	    ++tickCount;
 
-	    if((tickDelay * tickCount) >= TICK_SPEED_UP_INTERVAL_MS) {
-		clockTimer.setDelay(Math.max(MIN_TICK_DELAY_MS, tickDelay - TICK_SPEED_UP_MS)) ;
+	    if ((tickDelay * tickCount) >= TICK_SPEED_UP_INTERVAL_MS) {
+		clockTimer.setDelay(Math.max(MIN_TICK_DELAY_MS, tickDelay - TICK_SPEED_UP_MS));
 		tickCount = 0;
 	    }
 	}
-    };
+    }
 
     public void resetTickDelay() {
 	clockTimer.setDelay(NORMAL_TICK_SPEED_MS);
@@ -145,9 +146,10 @@ public class TetrisViewer
     }
 
     private void trySaveHighscoreList() {
-	String username = JOptionPane.showInputDialog("Enter your name to save your score\n(empty and blank names are not saved)");
+	String username = JOptionPane.showInputDialog(
+		"Enter your name to save your score\n(empty and blank names are not saved)");
 
-	if (username.isEmpty() || username.isBlank()) {
+	if (username == null || username.isEmpty() || username.isBlank()) {
 	    return;
 	}
 	highscoreList.addHighscore(new Highscore(username, scoreCounter.getScore()));

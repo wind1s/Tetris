@@ -63,11 +63,7 @@ public class TetrisAction
 	}
 
 	@Override public void actionPerformed(final ActionEvent e) {
-	    if(tetrisBoard.powerUpActive()) {
-		tetrisBoard.setFallHandler(new DefaultFallHandler(tetrisBoard));
-	    } else {
-	    	tetrisBoard.setFallHandler(fallHandler);
-	    }
+	    tetrisBoard.setFallHandler(fallHandler);
 	}
     }
 

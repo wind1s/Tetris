@@ -24,7 +24,8 @@ public class KeyBinder
 	bindKey("UP", tetrisAction.createAction(GameAction.ROTATE, Direction.RIGHT));
 	bindKey("ESCAPE", tetrisAction.createAction(GameAction.PAUSE));
 	bindKey("F", tetrisAction.createAction(GameAction.POWERUP, new Fallthrough(tetrisBoard)));
-	// bindKey("H", tetrisAction.createAction(GameAction.POWERUP, new FallHeavy[](tetrisBoard)));
+	bindKey("H", tetrisAction.createAction(GameAction.POWERUP, new FallHeavy(tetrisBoard)));
+	bindKey("D", tetrisAction.createAction(GameAction.POWERUP, new DefaultFallHandler(tetrisBoard)));
     }
 
     private void bindKey(final String keyStroke, final Action action) {

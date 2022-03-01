@@ -4,21 +4,15 @@ import java.awt.Point;
 
 public class DefaultFallHandler extends FallHandler
 {
-    public DefaultFallHandler(final Board tetrisBoard) {
-	super(tetrisBoard);
+    public DefaultFallHandler(final Board board) {
+	super(board);
     }
 
-    @Override public final boolean hasCollision() {
-	final int fallingSize = tetrisBoard.getFallingSize();
-	final Point fallingPos = tetrisBoard.getFallingPos();
-
+    @Override protected final boolean abstractCollision(final Point oldFallingPos) {
 	for (int y = 0; y < fallingSize; ++y) {
 	    for (int x = 0; x < fallingSize; ++x) {
-		final int xBoard = fallingPos.x + x;
-		final int yBoard = fallingPos.y + y;
 		// Collision occurs if the falling coordinate are outside the board or the falling square and board square are not empty.
-		if (isFallingOutsideBoard(x, y) || !(SquareType.isEmpty(tetrisBoard.getFallingSquare(x, y)) ||
-						     SquareType.isEmpty(tetrisBoard.getSquare(xBoard, yBoard)))) {
+		if (isFallingOutsideBoard(x, y) || isFallingSquareCollision(x, y)) {
 		    return true;
 		}
 	    }

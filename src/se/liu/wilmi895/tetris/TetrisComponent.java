@@ -22,7 +22,6 @@ public class TetrisComponent extends JComponent implements BoardListener
 
     @Override public void boardChanged() {
 	repaint();
-	scoreCounter.increaseScore(tetrisBoard.rowsLastRemoved());
     }
 
     @Override public Dimension getPreferredSize() {
@@ -43,7 +42,7 @@ public class TetrisComponent extends JComponent implements BoardListener
 	}
 
 	g2d.setColor(Color.CYAN);
-	g2d.setFont(new Font("Monospaced", Font.PLAIN,  squareWidth / 3));
+	g2d.setFont(new Font("Monospaced", Font.PLAIN, squareWidth / 3));
 	g2d.drawString(String.format("Score: %d", scoreCounter.getScore()), squareWidth, squareHeight);
     }
 
