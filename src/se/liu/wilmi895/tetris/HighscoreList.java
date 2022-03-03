@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,7 +20,7 @@ import java.util.List;
 public class HighscoreList
 {
     public static final String FILE_NAME = "highscores.json";
-    private static final String SAVE_FILE_PATH = System.getProperty("user.dir") + "/resources/" + FILE_NAME;
+    private static final String SAVE_FILE_PATH = System.getProperty("user.dir") + File.separator + "resources" + File.separator + FILE_NAME;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private List<Highscore> highscoreList = null;
 

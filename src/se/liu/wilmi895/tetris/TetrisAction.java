@@ -3,28 +3,24 @@ package se.liu.wilmi895.tetris;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class TetrisAction
 {
-    public static final SortedMap<Integer, String> YES_NO_OPTION_MAP = createOptionMap(new String[] { "Yes", "No" });
     private final AbstractAction quitAction = new QuitAction();
     private final AbstractAction restartAction = new RestartAction();
     private final TetrisViewer tetrisViewer;
     private final Board tetrisBoard;
-    private final ScoreCounter scoreCounter;
 
-    public TetrisAction(final TetrisViewer tetrisViewer, final Board tetrisBoard, final ScoreCounter scoreCounter)
+    public TetrisAction(final TetrisViewer tetrisViewer, final Board tetrisBoard)
     {
 	this.tetrisViewer = tetrisViewer;
 	this.tetrisBoard = tetrisBoard;
-	this.scoreCounter = scoreCounter;
     }
 
     public AbstractAction createAction(final GameAction gameAction, final Object... params) {
 	// Check the number of arguments supplied.
 	switch (gameAction) {
-	    case MOVE, ROTATE, POWERUP -> checkCreateActionParams(1, params, gameAction);
+	    case MOVE, ROTATE, POWERUP -> throwIfMissingArgs(1, params, gameAction);
 	}
 
 	switch (gameAction) {
@@ -45,7 +41,7 @@ public class TetrisAction
 	}
     }
 
-    private void checkCreateActionParams(final int numRequiredArgs, final Object[] params, final GameAction gameAction)
+    private void throwIfMissingArgs(final int numRequiredArgs, final Object[] params, final GameAction gameAction)
     {
 	if (numRequiredArgs < params.length) {
 	    throw new IllegalArgumentException(
@@ -70,13 +66,12 @@ public class TetrisAction
     private class RestartAction extends AbstractAction
     {
 	@Override public void actionPerformed(final ActionEvent e) {
-	    final boolean restart = showYesNoDialog("Restart game?", JOptionPane.QUESTION_MESSAGE);
+	    final boolean restart = tetrisViewer.showYesNoDialog("Restart game?", JOptionPane.QUESTION_MESSAGE);
 
 	    if (!restart) {
 		quitAction.actionPerformed(null);
 	    }
-	    scoreCounter.resetScore();
-	    tetrisViewer.resetTickDelay();
+	    tetrisViewer.resetClock();
 	    tetrisBoard.restartGame();
 	}
     }
@@ -120,7 +115,7 @@ public class TetrisAction
 	@Override public void actionPerformed(final ActionEvent e) {
 	    tetrisBoard.pauseGame(true);
 
-	    final boolean quit = showYesNoDialog("Quit game?", JOptionPane.QUESTION_MESSAGE);
+	    final boolean quit = tetrisViewer.showYesNoDialog("Quit game?", JOptionPane.QUESTION_MESSAGE);
 
 	    if (quit) {
 		System.exit(0);
@@ -132,7 +127,7 @@ public class TetrisAction
     private class PauseAction extends AbstractAction
     {
 	private final SortedMap<Integer, String> pauseOptionMap =
-		createOptionMap(new String[] { "Play", "Restart", "Quit" });
+		TetrisViewer.createOptionMap(new String[] { "Play", "Restart", "Quit" });
 
 	@Override public void actionPerformed(final ActionEvent e) {
 	    tetrisBoard.pauseGame(true);
@@ -148,26 +143,4 @@ public class TetrisAction
 
     }
 
-    private boolean showYesNoDialog(final String dialogMessage, final int messageType) {
-	int optionChosen =
-		tetrisViewer.showOptionDialog(dialogMessage, messageType, JOptionPane.DEFAULT_OPTION, YES_NO_OPTION_MAP,
-					      null);
-
-	switch (TetrisViewer.getOptionString(optionChosen, YES_NO_OPTION_MAP)) {
-	    case "Yes":
-		return true;
-	    case "No":
-	    default:
-		return false;
-	}
-    }
-
-    private static SortedMap<Integer, String> createOptionMap(final String[] options) {
-	final SortedMap<Integer, String> optionMap = new TreeMap<>();
-
-	for (int i = 0; i < options.length; ++i) {
-	    optionMap.put(i, options[i]);
-	}
-	return optionMap;
-    }
 }

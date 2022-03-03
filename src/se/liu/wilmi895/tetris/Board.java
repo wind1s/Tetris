@@ -8,9 +8,8 @@ import java.util.Random;
 
 public class Board
 {
+    private final static boolean DEBUG = true;
     private final static Random RND = new Random();
-    private final static int MARGIN = 2;
-    private final static int DOUBLE_MARGIN = MARGIN * 2;
 
     private final List<BoardListener> boardListeners = new ArrayList<>();
     private final TetrominoMaker tetrominoMaker = new TetrominoMaker();
@@ -30,15 +29,28 @@ public class Board
 	this.height = height;
 	this.fallHandler = new DefaultFallHandler(this);
 	this.scoreCounter = scoreCounter;
-	initDefaultBoard();
+	setDefaultBoard();
+
+	if (DEBUG) {
+	    Arrays.fill(squares[13], 0, width, SquareType.I);
+	    Arrays.fill(squares[14], 0, width, SquareType.I);
+	    setSquare(4, 13, SquareType.EMPTY);
+	    setSquare(4, 14, SquareType.EMPTY);
+	    setSquare(4, 11, SquareType.I);
+	    setSquare(4, 12, SquareType.I);
+	}
     }
 
-    private void initDefaultBoard() {
+    private void setDefaultBoard() {
 	squares = new SquareType[height][width];
 
 	for (int y = 0; y < height; ++y) {
-	    Arrays.fill(squares[y], 0, width, SquareType.EMPTY);
+	    setEmptyRow(y);
 	}
+    }
+
+    private void setEmptyRow(final int row) {
+	Arrays.fill(squares[row], 0, width, SquareType.EMPTY);
     }
 
     public int getWidth() {
@@ -54,12 +66,11 @@ public class Board
     }
 
     public void restartGame() {
-	initDefaultBoard();
-	pauseGame(false);
-	falling = null;
-	fallingPos = null;
-	fallingSize = 0;
+	setDefaultBoard();
+	resetFalling();
+	scoreCounter.resetScore();
 	gameOver = false;
+	pauseGame(false);
 
 	notifyListeners();
     }
@@ -87,7 +98,6 @@ public class Board
 		return getFallingSquare(xDiff, yDiff);
 	    }
 	}
-
 	return getSquare(x, y);
     }
 
@@ -101,6 +111,23 @@ public class Board
 
     public int getFallingSize() {
 	return fallingSize;
+    }
+
+    private void resetFalling() {
+	falling = null;
+	fallingPos = null;
+	fallingSize = 0;
+    }
+
+    private void setFalling(final int n) {
+	falling = tetrominoMaker.getPoly(n);
+	fallingSize = falling.getSize();
+	// Set the position to top middle of the screen.
+	fallingPos = new Point((width - fallingSize) / 2, 0);
+    }
+
+    public void setFallHandler(final FallHandler fallHandler) {
+	this.fallHandler = fallHandler;
     }
 
     public void addBoardListener(BoardListener bl) {
@@ -123,15 +150,21 @@ public class Board
 	    // Check if the bottom of the falling tetromino area has collided with something.
 	    if (hasCollided) {
 		placeFallingOnBoard();
-		scoreCounter.increaseScore(removeFullRows());
+		increasScore(removeFullRows());
 	    }
 	} else {
 	    setFalling(RND.nextInt(0, tetrominoMaker.getNumberOfTypes()));
+	    if(DEBUG) {
+		setFalling(6);
+	    }
 	    // If a newly spawned tetromino collides immediately, its game over.
 	    gameOver = fallHandler.hasCollision(fallingPos);
 	}
-
 	notifyListeners();
+    }
+
+    public void increasScore(final int rowsRemoved) {
+	scoreCounter.increaseScore(rowsRemoved);
     }
 
     public int removeFullRows() {
@@ -164,7 +197,7 @@ public class Board
 	    squares[row] = squares[row - 1];
 	}
 	squares[0] = new SquareType[width];
-	Arrays.fill(squares[0], 0, width, SquareType.EMPTY);
+	setEmptyRow(0);
     }
 
     public void pushDownColumn(final int col, final int stopRow) {
@@ -179,35 +212,18 @@ public class Board
 	    for (int x = 0; x < fallingSize; x++) {
 		// Place the non empty squares on the board.
 		if (!isFallingSquareEmpty(x, y)) {
-
 		    setSquare(fallingPos.x + x, fallingPos.y + y, falling.getSquare(x, y));
 		}
 	    }
 	}
-	falling = null;
-	fallingPos = null;
-    }
-
-    private void setFalling(final int n) {
-	falling = tetrominoMaker.getPoly(n);
-	fallingSize = falling.getSize();
-	// Set the position to top middle of the screen.
-	fallingPos = new Point((width - fallingSize) / 2, 0);
-    }
-
-    public void setFallHandler(final FallHandler fallHandler) {
-	this.fallHandler = fallHandler;
-    }
-
-    public boolean powerUpActive() {
-	return !fallHandler.getClass().equals(DefaultFallHandler.class);
+	resetFalling();
     }
 
     public boolean move(Direction direction) {
 	if (!hasFallingTetromino()) {
 	    return false;
 	}
-	final Point oldFallingPos = (Point) fallingPos.clone();
+	final Point oldFallingPos = new Point(fallingPos);
 	translateFalling(direction);
 	final boolean hasCollided = fallHandler.hasCollision(oldFallingPos);
 
@@ -217,7 +233,6 @@ public class Board
 	} else {
 	    notifyListeners();
 	}
-
 	return hasCollided;
     }
 
@@ -287,7 +302,6 @@ public class Board
 		row[x] = SquareType.fromInteger(Board.RND.nextInt(length));
 	    }
 	}
-
 	notifyListeners();
     }
 }

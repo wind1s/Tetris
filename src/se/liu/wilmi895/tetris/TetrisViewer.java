@@ -11,16 +11,18 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class TetrisViewer
 {
     private static final int NORMAL_TICK_SPEED_MS = 1000;
     private static final String FRAME_TITLE = "Tetris";
+    private final SortedMap<Integer, String> yesNoOptionMap = createOptionMap(new String[] { "Yes", "No" });
     private final Board tetrisBoard;
     private final ScoreCounter scoreCounter;
     private final CardLayout frameLayout = new CardLayout();
     private CardComponent visibleComponent = CardComponent.NONE;
-    private Timer clockTimer = null;
+    private Timer clock = null;
     private EnumMap<CardComponent, JComponent> componentMap = null;
     private JFrame frame = null;
     private TetrisComponent tetrisComponent = null;
@@ -55,7 +57,7 @@ public class TetrisViewer
     public void initWindow() {
 	tryLoadHighscoreList();
 
-	TetrisAction tetrisAction = new TetrisAction(this, tetrisBoard, scoreCounter);
+	TetrisAction tetrisAction = new TetrisAction(this, tetrisBoard);
 	restartAction = tetrisAction.createAction(GameAction.RESTART);
 	quitAction = tetrisAction.createAction(GameAction.QUIT);
 
@@ -75,18 +77,18 @@ public class TetrisViewer
 	frame.setVisible(true);
 	showCardComponent(CardComponent.START_SCREEN);
 
-	clockTimer = new Timer(NORMAL_TICK_SPEED_MS, new TickAction());
-	clockTimer.setInitialDelay(StartScreenComponent.SHOW_TIME_MS);
-	clockTimer.setCoalesce(true);
-	clockTimer.start();
+	clock = new Timer(NORMAL_TICK_SPEED_MS, new TickAction());
+	clock.setInitialDelay(StartScreenComponent.SHOW_TIME_MS);
+	clock.setCoalesce(true);
+	clock.start();
     }
 
     private class TickAction extends AbstractAction
     {
-	private static final int TICK_SPEED_UP_INTERVAL_MS = 10000;
+	private static final int TICK_SPEED_UP_INTERVAL_MS = 20000;
 	private static final int TICK_SPEED_UP_MS = 100;
-	private static final int MIN_TICK_DELAY_MS = 100;
-	private int tickCount = 0;
+	private static final int MIN_TICK_DELAY_MS = 150;
+	private int totalTicks = 0;
 
 	@Override public void actionPerformed(ActionEvent e) {
 	    if (tetrisBoard.isGameOver()) {
@@ -96,20 +98,22 @@ public class TetrisViewer
 	    } else {
 		showCardComponent(CardComponent.TETRIS_BOARD);
 		tetrisBoard.tick();
+		speedUpGame();
 	    }
+	}
 
-	    final int tickDelay = clockTimer.getDelay();
-	    ++tickCount;
+	private void speedUpGame() {
+	    final int tickDelay = clock.getDelay();
+	    ++totalTicks;
 
-	    if ((tickDelay * tickCount) >= TICK_SPEED_UP_INTERVAL_MS) {
-		clockTimer.setDelay(Math.max(MIN_TICK_DELAY_MS, tickDelay - TICK_SPEED_UP_MS));
-		tickCount = 0;
+	    if ((tickDelay * totalTicks) >= TICK_SPEED_UP_INTERVAL_MS) {
+		clock.setDelay(Math.max(MIN_TICK_DELAY_MS, tickDelay - TICK_SPEED_UP_MS));
 	    }
 	}
     }
 
-    public void resetTickDelay() {
-	clockTimer.setDelay(NORMAL_TICK_SPEED_MS);
+    public void resetClock() {
+	clock.setDelay(NORMAL_TICK_SPEED_MS);
     }
 
     private void initFrame() {
@@ -119,7 +123,6 @@ public class TetrisViewer
 	addCardComponent(CardComponent.HIGHSCORE_LIST, BorderLayout.CENTER);
 
 	frame.setLayout(frameLayout);
-
 	tetrisMenuBar.initMenuBar();
 	frame.setJMenuBar(tetrisMenuBar.getMenuBar());
 	frame.pack();
@@ -190,12 +193,24 @@ public class TetrisViewer
 	visibleComponent = component;
     }
 
-    private void showYesNoErrorDialog(final String dialogMessage) {
-	int optionChosen = showOptionDialog(dialogMessage, JOptionPane.ERROR_MESSAGE, JOptionPane.DEFAULT_OPTION,
-					    TetrisAction.YES_NO_OPTION_MAP, null);
+    public void showYesNoErrorDialog(final String dialogMessage) {
+	final boolean quit = !showYesNoDialog(dialogMessage, JOptionPane.ERROR_MESSAGE);
 
-	switch (getOptionString(optionChosen, TetrisAction.YES_NO_OPTION_MAP)) {
-	    case "No" -> quitAction.actionPerformed(null);
+	if(quit) {
+	    quitAction.actionPerformed(null);
+	}
+    }
+
+    public boolean showYesNoDialog(final String dialogMessage, final int messageType) {
+	int optionChosen =
+		showOptionDialog(dialogMessage, messageType, JOptionPane.DEFAULT_OPTION, yesNoOptionMap, null);
+
+	switch (TetrisViewer.getOptionString(optionChosen, yesNoOptionMap)) {
+	    case "Yes":
+		return true;
+	    case "No":
+	    default:
+		return false;
 	}
     }
 
@@ -214,5 +229,15 @@ public class TetrisViewer
 
     public static String getOptionString(final int optionChosen, final SortedMap<Integer, String> optionMap) {
 	return optionMap.getOrDefault(optionChosen, "");
+    }
+
+
+    public static SortedMap<Integer, String> createOptionMap(final String[] options) {
+	final SortedMap<Integer, String> optionMap = new TreeMap<>();
+
+	for (int i = 0; i < options.length; ++i) {
+	    optionMap.put(i, options[i]);
+	}
+	return optionMap;
     }
 }

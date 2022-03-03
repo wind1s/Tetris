@@ -14,7 +14,10 @@ public class FallHeavy extends FallHandler
     }
 
     @Override protected final boolean abstractCollision(final Point oldFallingPos) {
-	if (board.removeFullRows() >= 1) {
+	final int rowsRemoved = board.removeFullRows();
+	
+	if(rowsRemoved > 0) {
+	    board.increasScore(rowsRemoved);
 	    return false;
 	}
 	final List<Point> collisionCoords = new ArrayList<>();

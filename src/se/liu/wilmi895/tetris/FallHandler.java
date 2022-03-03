@@ -13,18 +13,14 @@ public abstract class FallHandler
     }
 
     public final boolean hasCollision(final Point oldFallingPos) {
-	updateFallingPos();
-	updateFallingSize();
+	updateFalling();
 	return abstractCollision(oldFallingPos);
     }
 
     protected abstract boolean abstractCollision(final Point oldFallingPos);
 
-    protected final void updateFallingPos() {
+    protected final void updateFalling() {
 	fallingPos = board.getFallingPos();
-    }
-
-    protected final void updateFallingSize() {
 	fallingSize = board.getFallingSize();
     }
 
