@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class Board
 {
-    private final static boolean DEBUG = true;
+    private final static boolean DEBUG = false;
     private final static Random RND = new Random();
 
     private final List<BoardListener> boardListeners = new ArrayList<>();

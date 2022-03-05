@@ -13,5 +13,8 @@ Press "F" to activate fallthrough which esentially turns off collision with othe
 tetrominos. Press "H" to activate heavy which pushes other squares down with a collision
 if there is empty space below.
 
+## Debug
+In "Board.java" there is a debug variable which is helpful for testing features.
+
 ## Author
 William Minidis
