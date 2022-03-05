@@ -196,7 +196,7 @@ public class TetrisViewer
     public void showYesNoErrorDialog(final String dialogMessage) {
 	final boolean quit = !showYesNoDialog(dialogMessage, JOptionPane.ERROR_MESSAGE);
 
-	if(quit) {
+	if (quit) {
 	    quitAction.actionPerformed(null);
 	}
     }

@@ -20,7 +20,8 @@ import java.util.List;
 public class HighscoreList
 {
     public static final String FILE_NAME = "highscores.json";
-    private static final String SAVE_FILE_PATH = System.getProperty("user.dir") + File.separator + "resources" + File.separator + FILE_NAME;
+    private static final String SAVE_FILE_PATH =
+	    System.getProperty("user.dir") + File.separator + "resources" + File.separator + FILE_NAME;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private List<Highscore> highscoreList = null;
 
@@ -55,8 +56,7 @@ public class HighscoreList
 
 	final Path targetFile = Paths.get(SAVE_FILE_PATH);
 	Files.deleteIfExists(targetFile);
-	Files.move(Paths.get(tempFile), targetFile,
-		   StandardCopyOption.REPLACE_EXISTING);
+	Files.move(Paths.get(tempFile), targetFile, StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static HighscoreList readSavedJson() throws IOException, JsonSyntaxException, JsonIOException {

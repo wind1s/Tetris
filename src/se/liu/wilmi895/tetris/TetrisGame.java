@@ -1,6 +1,6 @@
 package se.liu.wilmi895.tetris;
 
-public class TetrisTester
+public class TetrisGame
 {
     public static void main(String[] args) {
 	final ScoreCounter scoreCounter = new ScoreCounter();

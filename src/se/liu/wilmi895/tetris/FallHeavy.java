@@ -15,8 +15,8 @@ public class FallHeavy extends FallHandler
 
     @Override protected final boolean abstractCollision(final Point oldFallingPos) {
 	final int rowsRemoved = board.removeFullRows();
-	
-	if(rowsRemoved > 0) {
+
+	if (rowsRemoved > 0) {
 	    board.increasScore(rowsRemoved);
 	    return false;
 	}
