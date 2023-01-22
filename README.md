@@ -1,4 +1,4 @@
-# Tetris (TDDE30)
+# Tetris
 ## Quick start
 Use "arrow keys" to move tetromino left, right and rotate clockwise, anticlockwise.
 Press space to move the tetromino down faster.
@@ -15,6 +15,9 @@ if there is empty space below.
 
 ## Debug
 In "Board.java" there is a debug variable which is helpful for testing features.
+
+## Dependencies
+GSON-2.8.9, miglayout-core-5.3, miglayout-swing-5.3, commons-cli-1.5.0
 
 ## Author
 William Minidis
